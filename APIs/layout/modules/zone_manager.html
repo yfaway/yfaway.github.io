@@ -1,0 +1,264 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ZoneManager &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Zone" href="zone.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="../modules.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-aaa_modules.layout_model.zone_manager">
+<span id="zonemanager"></span><h1>ZoneManager<a class="headerlink" href="#module-aaa_modules.layout_model.zone_manager" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="aaa_modules.layout_model.zone_manager.ZoneManager">
+<em class="property">class </em><code class="descclassname">aaa_modules.layout_model.zone_manager.</code><code class="descname">ZoneManager</code><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone_manager.html#ZoneManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone_manager.ZoneManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains a set of Zone instances.</p>
+<dl class="staticmethod">
+<dt id="aaa_modules.layout_model.zone_manager.ZoneManager.addZone">
+<em class="property">static </em><code class="descname">addZone</code><span class="sig-paren">(</span><em>zone</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone_manager.html#ZoneManager.addZone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone_manager.ZoneManager.addZone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a zone.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>zone</strong> (<a class="reference internal" href="zone.html#aaa_modules.layout_model.zone.Zone" title="aaa_modules.layout_model.zone.Zone"><em>Zone</em></a>) – a Zone instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="aaa_modules.layout_model.zone_manager.ZoneManager.getZoneById">
+<em class="property">static </em><code class="descname">getZoneById</code><span class="sig-paren">(</span><em>zoneId</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone_manager.html#ZoneManager.getZoneById"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone_manager.ZoneManager.getZoneById" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the zone associated with the given zoneId.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>zoneId</strong> (<em>string</em>) – the value returned by Zone::getId()</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the associated zone or None if the zoneId is not found</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="zone.html#aaa_modules.layout_model.zone.Zone" title="aaa_modules.layout_model.zone.Zone">Zone</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="aaa_modules.layout_model.zone_manager.ZoneManager.getZones">
+<em class="property">static </em><code class="descname">getZones</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone_manager.html#ZoneManager.getZones"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone_manager.ZoneManager.getZones" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new list contains all zone.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="zone.html#aaa_modules.layout_model.zone.Zone" title="aaa_modules.layout_model.zone.Zone">Zone</a>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="aaa_modules.layout_model.zone_manager.ZoneManager.onMotionSensorTurnedOn">
+<em class="property">static </em><code class="descname">onMotionSensorTurnedOn</code><span class="sig-paren">(</span><em>events</em>, <em>itemName</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone_manager.html#ZoneManager.onMotionSensorTurnedOn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone_manager.ZoneManager.onMotionSensorTurnedOn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dispatches the motion sensor turned on event to each zone.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if at least one zone processed the event; False otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="aaa_modules.layout_model.zone_manager.ZoneManager.onSwitchTurnedOff">
+<em class="property">static </em><code class="descname">onSwitchTurnedOff</code><span class="sig-paren">(</span><em>events</em>, <em>itemName</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone_manager.html#ZoneManager.onSwitchTurnedOff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone_manager.ZoneManager.onSwitchTurnedOff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dispatches the switch turned off event to each zone.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if at least one zone processed the event; False otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="aaa_modules.layout_model.zone_manager.ZoneManager.onSwitchTurnedOn">
+<em class="property">static </em><code class="descname">onSwitchTurnedOn</code><span class="sig-paren">(</span><em>events</em>, <em>itemName</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone_manager.html#ZoneManager.onSwitchTurnedOn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone_manager.ZoneManager.onSwitchTurnedOn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dispatches the switch turned on event to each zone.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if at least one zone processed the event; False otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="aaa_modules.layout_model.zone_manager.ZoneManager.onTimerExpired">
+<em class="property">static </em><code class="descname">onTimerExpired</code><span class="sig-paren">(</span><em>events</em>, <em>itemName</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone_manager.html#ZoneManager.onTimerExpired"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone_manager.ZoneManager.onTimerExpired" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dispatches the timer expiry event to each zone.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>events</strong> (<em>scope.events</em>) – the global events object</li>
+<li><strong>itemName</strong> (<em>str</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if at least one zone processed the event; False otherwise</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="aaa_modules.layout_model.zone_manager.ZoneManager.removeAllZones">
+<em class="property">static </em><code class="descname">removeAllZones</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone_manager.html#ZoneManager.removeAllZones"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone_manager.ZoneManager.removeAllZones" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all zone.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="aaa_modules.layout_model.zone_manager.ZoneManager.removeZone">
+<em class="property">static </em><code class="descname">removeZone</code><span class="sig-paren">(</span><em>zone</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone_manager.html#ZoneManager.removeZone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone_manager.ZoneManager.removeZone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a zone.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>zone</strong> (<a class="reference internal" href="zone.html#aaa_modules.layout_model.zone.Zone" title="aaa_modules.layout_model.zone.Zone"><em>Zone</em></a>) – a Zone instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../layout.html">Zone Layout API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ZoneManager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zone.html">Zone</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../layout.html">Zone Layout API</a><ul>
+  <li><a href="../modules.html">&lt;no title&gt;</a><ul>
+      <li>Previous: <a href="../modules.html" title="previous chapter">&lt;no title&gt;</a></li>
+      <li>Next: <a href="zone.html" title="next chapter">Zone</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/APIs/layout/modules/zone_manager.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

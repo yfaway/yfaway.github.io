@@ -1,0 +1,446 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>aaa_modules.layout_model.zone &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for aaa_modules.layout_model.zone</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">aaa_modules.layout_model.actions.turn_off_adjacent_zones</span> <span class="k">import</span> <span class="n">TurnOffAdjacentZones</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.astro_sensor</span> <span class="k">import</span> <span class="n">AstroSensor</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.illuminance_sensor</span> <span class="k">import</span> <span class="n">IlluminanceSensor</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.motion_sensor</span> <span class="k">import</span> <span class="n">MotionSensor</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.switch</span> <span class="k">import</span> <span class="n">Light</span><span class="p">,</span> <span class="n">Switch</span>
+
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.actions.turn_on_switch</span> <span class="k">import</span> <span class="n">TurnOnSwitch</span>
+
+<span class="kn">from</span> <span class="nn">org.slf4j</span> <span class="k">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">LoggerFactory</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;org.eclipse.smarthome.model.script.Rules&quot;</span><span class="p">)</span>
+
+<span class="c1"># The vertical levels.</span>
+<span class="k">class</span> <span class="nc">Level</span><span class="p">:</span>
+    <span class="n">UNDEFINED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">BASEMENT</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">FIRST_FLOOR</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">SECOND_FLOOR</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">THIRD_FLOOR</span> <span class="o">=</span> <span class="mi">3</span>
+
+<div class="viewcode-block" id="Zone"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone">[docs]</a><span class="k">class</span> <span class="nc">Zone</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represent a zone such as a room, foyer, porch, or lobby.</span>
+<span class="sd">    Each zone holds a number of devices/sensors such as switches, motion sensors,</span>
+<span class="sd">    or temperature sensors.</span>
+
+<span class="sd">    A zone might have zero, one or multiple adjacent zones. The adjacent zones</span>
+<span class="sd">    can be further classified into closed space (i.e. a wall exists between the</span>
+<span class="sd">    two zones, open space, open space slave (the neighbor is a less important</span>
+<span class="sd">    zone), and open space master. This layout-like structure is useful for</span>
+<span class="sd">    certain scenario such as light control.</span>
+
+<span class="sd">    Each zone instance is IMMUTABLE. The various add/remove methods return a new</span>
+<span class="sd">    Zone object. Note however that the OpenHab item underlying each</span>
+<span class="sd">    device/sensor is not (the state changes).</span>
+<span class="sd">    See #addDevice(), #removeDevice(), #addNeighbor()</span>
+
+<span class="sd">    The zone itself doesn&#39;t know how to operate a device/sensor. The sensors</span>
+<span class="sd">    themselves (all sensors derive from Device class) exposes the possible</span>
+<span class="sd">    operations. Generally, the zone needs not know about the exact types of </span>
+<span class="sd">    sensors it contains. However, controlling the light is a very common case</span>
+<span class="sd">    for home automation; thus it does references to several virtual/physical</span>
+<span class="sd">    sensors to determine the astro time, the illuminance, and the motion sensor.</span>
+<span class="sd">    See #getDevices(), #getDevicesByType().</span>
+
+<span class="sd">    There are two sets of operation on each zone:</span>
+<span class="sd">      1. Active operations such as turn on a light/fan in a zone. These are</span>
+<span class="sd">         represented by common functions such as #turnOnLights(),</span>
+<span class="sd">         #turnOffLights(); and</span>
+<span class="sd">      2. Passive operations triggered by events such onTimerExpired(),</span>
+<span class="sd">         onSwitchTurnedOn(), and so on.</span>
+<span class="sd">    The passive triggering is needed because the interaction with the devices or</span>
+<span class="sd">    sensors might happen outside the interface exposed by this class. It could</span>
+<span class="sd">    be a manually action on the switch by the user, or a direct send command </span>
+<span class="sd">    through the OpenHab event bus.</span>
+<span class="sd">    All the onXxx methods accept two parameters: the core.jsr223.scope.events</span>
+<span class="sd">    object and the string itemName. The zone will perform appropriate actions</span>
+<span class="sd">    for each of these events. For example, a motion event will turn on the light</span>
+<span class="sd">    if it is dark or if it is evening time; a timer expiry event will turn off</span>
+<span class="sd">    the associated light if it is currently on.</span>
+
+<span class="sd">    @Immutable (the Zone object only)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">devices</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">level</span> <span class="o">=</span> <span class="n">Level</span><span class="o">.</span><span class="n">UNDEFINED</span><span class="p">,</span> <span class="n">neighbors</span> <span class="o">=</span> <span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new zone.</span>
+
+<span class="sd">        :param str name: the zone name</span>
+<span class="sd">        :param list(Device) devices: the list of Device objects</span>
+<span class="sd">        :param Level level: the zone&#39;s physical level</span>
+<span class="sd">        :param list(Neigbor) neighbors: the list of optional neighbor zones.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Zone.addDevice"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.addDevice">[docs]</a>    <span class="k">def</span> <span class="nf">addDevice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates a new zone that is an exact copy of this one, but has the</span>
+<span class="sd">        additional device.</span>
+
+<span class="sd">        :return: A NEW object.</span>
+<span class="sd">        :rtype: Zone</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="kc">None</span> <span class="o">==</span> <span class="n">device</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;device must not be None&#39;</span><span class="p">)</span>
+
+        <span class="n">newDevices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">)</span>
+        <span class="n">newDevices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Zone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">newDevices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Zone.removeDevice"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.removeDevice">[docs]</a>    <span class="k">def</span> <span class="nf">removeDevice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates a new zone that is an exact copy of this one less the given</span>
+<span class="sd">        device</span>
+
+<span class="sd">        :return: A NEW object.</span>
+<span class="sd">        :rtype: Zone </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="kc">None</span> <span class="o">==</span> <span class="n">device</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;device must not be None&#39;</span><span class="p">)</span>
+
+        <span class="n">newDevices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">)</span>
+        <span class="n">newDevices</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Zone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">newDevices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Zone.getDevices"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.getDevices">[docs]</a>    <span class="k">def</span> <span class="nf">getDevices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns a copy of the list of devices.</span>
+
+<span class="sd">        :rtype: list(Device)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Zone.getDevicesByType"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.getDevicesByType">[docs]</a>    <span class="k">def</span> <span class="nf">getDevicesByType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns a list of devices matching the given type.</span>
+
+<span class="sd">        :param Device cls: the device type</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="kc">None</span> <span class="o">==</span> <span class="bp">cls</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;cls must not be None&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="Zone.addNeighbor"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.addNeighbor">[docs]</a>    <span class="k">def</span> <span class="nf">addNeighbor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neighbor</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates a new zone that is an exact copy of this one, but has the</span>
+<span class="sd">        additional neighbor.</span>
+
+<span class="sd">        :return: A NEW object.</span>
+<span class="sd">        :rtype: Zone </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="kc">None</span> <span class="o">==</span> <span class="n">neighbor</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;neighbor must not be None&#39;</span><span class="p">)</span>
+
+        <span class="n">newNeighbors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span><span class="p">)</span>
+        <span class="n">newNeighbors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Zone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">,</span> <span class="n">newNeighbors</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">getId</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getLevel</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">getName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">getLevel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span>
+
+<div class="viewcode-block" id="Zone.getNeighbors"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.getNeighbors">[docs]</a>    <span class="k">def</span> <span class="nf">getNeighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :return: a copy of the list of neighboring zones.</span>
+<span class="sd">        :rtype: list(Neighbor)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Zone.containsOpenHabItem"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.containsOpenHabItem">[docs]</a>    <span class="k">def</span> <span class="nf">containsOpenHabItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">itemName</span><span class="p">,</span> <span class="n">sensorType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns True if this zone contains the given itemName; returns False </span>
+<span class="sd">        otherwise.</span>
+
+<span class="sd">        :param str itemName:</span>
+<span class="sd">        :param Device sensorType: an optional sub-class of Device. If specified,</span>
+<span class="sd">            will search for itemName for those device types only. Otherwise,</span>
+<span class="sd">            search for all devices/sensors.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">sensors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDevices</span><span class="p">()</span> <span class="k">if</span> <span class="kc">None</span> <span class="o">==</span> <span class="n">sensorType</span> \
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">sensorType</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">getItemName</span><span class="p">()</span> <span class="o">==</span> <span class="n">itemName</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sensors</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Zone.getIlluminanceLevel"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.getIlluminanceLevel">[docs]</a>    <span class="k">def</span> <span class="nf">getIlluminanceLevel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Retrieves the maximum illuminance level from one or more IlluminanceSensor.</span>
+<span class="sd">        If no sensor is available, return -1.</span>
+
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">illuminances</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">getIlluminanceLevel</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span>
+                <span class="n">IlluminanceSensor</span><span class="p">)]</span>
+        <span class="n">zoneIlluminance</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">illuminances</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">zoneIlluminance</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">illuminances</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">zoneIlluminance</span></div>
+
+<div class="viewcode-block" id="Zone.isLightOnTime"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.isLightOnTime">[docs]</a>    <span class="k">def</span> <span class="nf">isLightOnTime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns True if it is light-on time; returns false if it is no. Returns</span>
+<span class="sd">        None if there is no AstroSensor to determine the time.</span>
+
+<span class="sd">        :rtype: bool or None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">astroSensors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">AstroSensor</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">astroSensors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">isLightOnTime</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">astroSensors</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Zone.isOccupied"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.isOccupied">[docs]</a>    <span class="k">def</span> <span class="nf">isOccupied</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minutesFromLastMotionEvent</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns True if the zone has at least one switch turned on, or if a</span>
+<span class="sd">        motion event was triggered within the provided # of minutes.</span>
+
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">occupied</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">motionSensors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">MotionSensor</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">isOccupied</span><span class="p">(</span><span class="n">minutesFromLastMotionEvent</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">motionSensors</span><span class="p">):</span>
+            <span class="n">occupied</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">switches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">Switch</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">isOn</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">switches</span><span class="p">):</span>
+                <span class="n">occupied</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">occupied</span></div>
+
+<div class="viewcode-block" id="Zone.isLightOn"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.isLightOn">[docs]</a>    <span class="k">def</span> <span class="nf">isLightOn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns True if at least one light is on; returns False otherwise.</span>
+
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">isOn</span><span class="p">()</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">Light</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Zone.shareSensorWith"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.shareSensorWith">[docs]</a>    <span class="k">def</span> <span class="nf">shareSensorWith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zone</span><span class="p">,</span> <span class="n">sensorType</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns True if this zone shares at least one sensor of the given</span>
+<span class="sd">        sensorType with the provider zone.</span>
+<span class="sd">        Two sensors are considered the same if they link to the same channel.</span>
+<span class="sd">        @see #Device#getChannel()</span>
+
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">ourSensorChannels</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">getChannel</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">sensorType</span><span class="p">)</span>
+            <span class="k">if</span> <span class="kc">None</span> <span class="o">!=</span> <span class="n">s</span><span class="o">.</span><span class="n">getChannel</span><span class="p">()]</span>
+
+        <span class="n">theirSensorChannels</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">getChannel</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">zone</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">sensorType</span><span class="p">)</span>
+            <span class="k">if</span> <span class="kc">None</span> <span class="o">!=</span> <span class="n">s</span><span class="o">.</span><span class="n">getChannel</span><span class="p">()]</span>
+
+        <span class="n">intersection</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ourSensorChannels</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">theirSensorChannels</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="Zone.turnOffLights"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.turnOffLights">[docs]</a>    <span class="k">def</span> <span class="nf">turnOffLights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Turn off all the lights in the zone.</span>
+
+<span class="sd">        :param scope.events events:</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">Light</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">isOn</span><span class="p">():</span>
+                <span class="n">l</span><span class="o">.</span><span class="n">turnOff</span><span class="p">(</span><span class="n">events</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Zone.onTimerExpired"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.onTimerExpired">[docs]</a>    <span class="k">def</span> <span class="nf">onTimerExpired</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">itemName</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Determines if the timer itemName is associated with a switch in this</span>
+<span class="sd">        zone; if yes, turns off the switch and returns True. Otherwise returns</span>
+<span class="sd">        False.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">isProcessed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">switches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">Switch</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="n">switches</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">switch</span><span class="o">.</span><span class="n">getTimerItem</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">==</span> <span class="n">itemName</span><span class="p">:</span>
+                <span class="n">switch</span><span class="o">.</span><span class="n">turnOff</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+                <span class="n">isProcessed</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="k">return</span> <span class="n">isProcessed</span></div>
+
+<div class="viewcode-block" id="Zone.onSwitchTurnedOn"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.onSwitchTurnedOn">[docs]</a>    <span class="k">def</span> <span class="nf">onSwitchTurnedOn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">itemName</span><span class="p">,</span> <span class="n">getZoneByIdFn</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        If itemName belongs to this zone, dispatches the event to the associated</span>
+<span class="sd">        Switch object, and returns True. Otherwise return False.</span>
+<span class="sd">        @see Switch::onSwitchTurnedOn</span>
+
+<span class="sd">        :param lambda getZoneByIdFn: a function that returns a Zone object given</span>
+<span class="sd">            a zone id string</span>
+<span class="sd">        :rtype: boolean</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">isProcessed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">switches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">Switch</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="n">switches</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">switch</span><span class="o">.</span><span class="n">onSwitchTurnedOn</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">itemName</span><span class="p">):</span>
+                <span class="n">TurnOffAdjacentZones</span><span class="p">()</span><span class="o">.</span><span class="n">onAction</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">getZoneByIdFn</span><span class="p">)</span>
+                <span class="n">isProcessed</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="k">return</span> <span class="n">isProcessed</span></div>
+
+<div class="viewcode-block" id="Zone.onSwitchTurnedOff"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.onSwitchTurnedOff">[docs]</a>    <span class="k">def</span> <span class="nf">onSwitchTurnedOff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">itemName</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        If itemName belongs to this zone, dispatches the event to the associated</span>
+<span class="sd">        Switch object, and returns True. Otherwise return False.</span>
+<span class="sd">        @see Switch::onSwitchTurnedOff</span>
+
+<span class="sd">        :rtype: boolean</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">isProcessed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">switches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">Switch</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="n">switches</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">switch</span><span class="o">.</span><span class="n">onSwitchTurnedOff</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">itemName</span><span class="p">):</span>
+                <span class="n">isProcessed</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="k">return</span> <span class="n">isProcessed</span></div>
+
+<div class="viewcode-block" id="Zone.onMotionSensorTurnedOn"><a class="viewcode-back" href="../../../APIs/layout/modules/zone.html#aaa_modules.layout_model.zone.Zone.onMotionSensorTurnedOn">[docs]</a>    <span class="k">def</span> <span class="nf">onMotionSensorTurnedOn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">itemName</span><span class="p">,</span> <span class="n">getZoneByIdFn</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        If the motion sensor belongs to this zone, turns on the associated</span>
+<span class="sd">        switch, and returns True. Otherwise return False.</span>
+<span class="sd">        @see Switch::onSwitchTurnedOff</span>
+
+<span class="sd">        :param lambda getZoneByIdFn: a function that returns a Zone object given</span>
+<span class="sd">            a zone id string</span>
+<span class="sd">        :rtype: boolean</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">containsOpenHabItem</span><span class="p">(</span><span class="n">itemName</span><span class="p">,</span> <span class="n">MotionSensor</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span> 
+
+        <span class="k">return</span> <span class="n">TurnOnSwitch</span><span class="p">()</span><span class="o">.</span><span class="n">onAction</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">getZoneByIdFn</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">unicode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">str</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;Zone: </span><span class="si">{}</span><span class="s2">, floor </span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2"> devices&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span>
+            <span class="nb">str</span> <span class="o">+=</span> <span class="sa">u</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unicode</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span><span class="p">:</span>
+                <span class="nb">str</span> <span class="o">+=</span> <span class="sa">u</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  Neighbor: </span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">n</span><span class="o">.</span><span class="n">getZoneId</span><span class="p">(),</span> <span class="n">unicode</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">getType</span><span class="p">()))</span>
+
+        <span class="k">return</span> <span class="nb">str</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../APIs/layout.html">Zone Layout API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

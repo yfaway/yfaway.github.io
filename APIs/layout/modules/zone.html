@@ -1,0 +1,435 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Zone &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="../../../scripts/scripts.html" />
+    <link rel="prev" title="ZoneManager" href="zone_manager.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-aaa_modules.layout_model.zone">
+<span id="zone"></span><h1>Zone<a class="headerlink" href="#module-aaa_modules.layout_model.zone" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="aaa_modules.layout_model.zone.Zone">
+<em class="property">class </em><code class="descclassname">aaa_modules.layout_model.zone.</code><code class="descname">Zone</code><span class="sig-paren">(</span><em>name</em>, <em>devices=[]</em>, <em>level=-1</em>, <em>neighbors=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represent a zone such as a room, foyer, porch, or lobby.
+Each zone holds a number of devices/sensors such as switches, motion sensors,
+or temperature sensors.</p>
+<p>A zone might have zero, one or multiple adjacent zones. The adjacent zones
+can be further classified into closed space (i.e. a wall exists between the
+two zones, open space, open space slave (the neighbor is a less important
+zone), and open space master. This layout-like structure is useful for
+certain scenario such as light control.</p>
+<p>Each zone instance is IMMUTABLE. The various add/remove methods return a new
+Zone object. Note however that the OpenHab item underlying each
+device/sensor is not (the state changes).
+See #addDevice(), #removeDevice(), #addNeighbor()</p>
+<p>The zone itself doesn’t know how to operate a device/sensor. The sensors
+themselves (all sensors derive from Device class) exposes the possible
+operations. Generally, the zone needs not know about the exact types of 
+sensors it contains. However, controlling the light is a very common case
+for home automation; thus it does references to several virtual/physical
+sensors to determine the astro time, the illuminance, and the motion sensor.
+See #getDevices(), #getDevicesByType().</p>
+<dl class="docutils">
+<dt>There are two sets of operation on each zone:</dt>
+<dd><ol class="first last arabic simple">
+<li>Active operations such as turn on a light/fan in a zone. These are
+represented by common functions such as #turnOnLights(),
+#turnOffLights(); and</li>
+<li>Passive operations triggered by events such onTimerExpired(),
+onSwitchTurnedOn(), and so on.</li>
+</ol>
+</dd>
+</dl>
+<p>The passive triggering is needed because the interaction with the devices or
+sensors might happen outside the interface exposed by this class. It could
+be a manually action on the switch by the user, or a direct send command 
+through the OpenHab event bus.
+All the onXxx methods accept two parameters: the core.jsr223.scope.events
+object and the string itemName. The zone will perform appropriate actions
+for each of these events. For example, a motion event will turn on the light
+if it is dark or if it is evening time; a timer expiry event will turn off
+the associated light if it is currently on.</p>
+<p>&#64;Immutable (the Zone object only)</p>
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.addDevice">
+<code class="descname">addDevice</code><span class="sig-paren">(</span><em>device</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.addDevice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.addDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new zone that is an exact copy of this one, but has the
+additional device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A NEW object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#aaa_modules.layout_model.zone.Zone" title="aaa_modules.layout_model.zone.Zone">Zone</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.addNeighbor">
+<code class="descname">addNeighbor</code><span class="sig-paren">(</span><em>neighbor</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.addNeighbor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.addNeighbor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new zone that is an exact copy of this one, but has the
+additional neighbor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A NEW object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#aaa_modules.layout_model.zone.Zone" title="aaa_modules.layout_model.zone.Zone">Zone</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.containsOpenHabItem">
+<code class="descname">containsOpenHabItem</code><span class="sig-paren">(</span><em>itemName</em>, <em>sensorType=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.containsOpenHabItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.containsOpenHabItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if this zone contains the given itemName; returns False 
+otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>itemName</strong> (<em>str</em>) – </li>
+<li><strong>sensorType</strong> (<em>Device</em>) – an optional sub-class of Device. If specified,
+will search for itemName for those device types only. Otherwise,
+search for all devices/sensors.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.getDevices">
+<code class="descname">getDevices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.getDevices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.getDevices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of the list of devices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(Device)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.getDevicesByType">
+<code class="descname">getDevicesByType</code><span class="sig-paren">(</span><em>cls</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.getDevicesByType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.getDevicesByType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of devices matching the given type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cls</strong> (<em>Device</em>) – the device type</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.getIlluminanceLevel">
+<code class="descname">getIlluminanceLevel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.getIlluminanceLevel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.getIlluminanceLevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the maximum illuminance level from one or more IlluminanceSensor.
+If no sensor is available, return -1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.getNeighbors">
+<code class="descname">getNeighbors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.getNeighbors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.getNeighbors" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a copy of the list of neighboring zones.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(Neighbor)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.isLightOn">
+<code class="descname">isLightOn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.isLightOn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.isLightOn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if at least one light is on; returns False otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.isLightOnTime">
+<code class="descname">isLightOnTime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.isLightOnTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.isLightOnTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if it is light-on time; returns false if it is no. Returns
+None if there is no AstroSensor to determine the time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.isOccupied">
+<code class="descname">isOccupied</code><span class="sig-paren">(</span><em>minutesFromLastMotionEvent=5</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.isOccupied"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.isOccupied" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the zone has at least one switch turned on, or if a
+motion event was triggered within the provided # of minutes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.onMotionSensorTurnedOn">
+<code class="descname">onMotionSensorTurnedOn</code><span class="sig-paren">(</span><em>events</em>, <em>itemName</em>, <em>getZoneByIdFn</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.onMotionSensorTurnedOn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.onMotionSensorTurnedOn" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the motion sensor belongs to this zone, turns on the associated
+switch, and returns True. Otherwise return False.
+&#64;see Switch::onSwitchTurnedOff</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>getZoneByIdFn</strong> (<em>lambda</em>) – a function that returns a Zone object given
+a zone id string</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.onSwitchTurnedOff">
+<code class="descname">onSwitchTurnedOff</code><span class="sig-paren">(</span><em>events</em>, <em>itemName</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.onSwitchTurnedOff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.onSwitchTurnedOff" title="Permalink to this definition">¶</a></dt>
+<dd><p>If itemName belongs to this zone, dispatches the event to the associated
+Switch object, and returns True. Otherwise return False.
+&#64;see Switch::onSwitchTurnedOff</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.onSwitchTurnedOn">
+<code class="descname">onSwitchTurnedOn</code><span class="sig-paren">(</span><em>events</em>, <em>itemName</em>, <em>getZoneByIdFn</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.onSwitchTurnedOn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.onSwitchTurnedOn" title="Permalink to this definition">¶</a></dt>
+<dd><p>If itemName belongs to this zone, dispatches the event to the associated
+Switch object, and returns True. Otherwise return False.
+&#64;see Switch::onSwitchTurnedOn</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>getZoneByIdFn</strong> (<em>lambda</em>) – a function that returns a Zone object given
+a zone id string</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.onTimerExpired">
+<code class="descname">onTimerExpired</code><span class="sig-paren">(</span><em>events</em>, <em>itemName</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.onTimerExpired"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.onTimerExpired" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines if the timer itemName is associated with a switch in this
+zone; if yes, turns off the switch and returns True. Otherwise returns
+False.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.removeDevice">
+<code class="descname">removeDevice</code><span class="sig-paren">(</span><em>device</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.removeDevice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.removeDevice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new zone that is an exact copy of this one less the given
+device</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A NEW object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#aaa_modules.layout_model.zone.Zone" title="aaa_modules.layout_model.zone.Zone">Zone</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.shareSensorWith">
+<code class="descname">shareSensorWith</code><span class="sig-paren">(</span><em>zone</em>, <em>sensorType</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.shareSensorWith"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.shareSensorWith" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if this zone shares at least one sensor of the given
+sensorType with the provider zone.
+Two sensors are considered the same if they link to the same channel.
+&#64;see #Device#getChannel()</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.turnOffLights">
+<code class="descname">turnOffLights</code><span class="sig-paren">(</span><em>events</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.turnOffLights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.turnOffLights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn off all the lights in the zone.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>events</strong> (<em>scope.events</em>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../layout.html">Zone Layout API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="zone_manager.html">ZoneManager</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Zone</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../layout.html">Zone Layout API</a><ul>
+  <li><a href="../modules.html">&lt;no title&gt;</a><ul>
+      <li>Previous: <a href="zone_manager.html" title="previous chapter">ZoneManager</a></li>
+      <li>Next: <a href="../../../scripts/scripts.html" title="next chapter">&lt;no title&gt;</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/APIs/layout/modules/zone.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
