@@ -16,7 +16,7 @@
     <script type="text/javascript" src="../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="../../../scripts/scripts.html" />
+    <link rel="next" title="Neighbor &amp; NeighborType" href="neighbor.html" />
     <link rel="prev" title="ZoneManager" href="zone_manager.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
@@ -39,7 +39,7 @@
 <dl class="class">
 <dt id="aaa_modules.layout_model.zone.Zone">
 <em class="property">class </em><code class="descclassname">aaa_modules.layout_model.zone.</code><code class="descname">Zone</code><span class="sig-paren">(</span><em>name</em>, <em>devices=[]</em>, <em>level=-1</em>, <em>neighbors=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represent a zone such as a room, foyer, porch, or lobby.
+<dd><p>Represent a zone such as a room, foyer, porch, or lobby. 
 Each zone holds a number of devices/sensors such as switches, motion sensors,
 or temperature sensors.</p>
 <p>A zone might have zero, one or multiple adjacent zones. The adjacent zones
@@ -124,7 +124,7 @@ otherwise.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>itemName</strong> (<em>str</em>) – </li>
-<li><strong>sensorType</strong> (<em>Device</em>) – an optional sub-class of Device. If specified,
+<li><strong>sensorType</strong> (<a class="reference internal" href="device.html#aaa_modules.layout_model.device.Device" title="aaa_modules.layout_model.device.Device"><em>Device</em></a>) – an optional sub-class of Device. If specified,
 will search for itemName for those device types only. Otherwise,
 search for all devices/sensors.</li>
 </ul>
@@ -145,7 +145,7 @@ search for all devices/sensors.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(Device)</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="device.html#aaa_modules.layout_model.device.Device" title="aaa_modules.layout_model.device.Device">Device</a>)</td>
 </tr>
 </tbody>
 </table>
@@ -159,7 +159,7 @@ search for all devices/sensors.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cls</strong> (<em>Device</em>) – the device type</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cls</strong> (<a class="reference internal" href="device.html#aaa_modules.layout_model.device.Device" title="aaa_modules.layout_model.device.Device"><em>Device</em></a>) – the device type</td>
 </tr>
 </tbody>
 </table>
@@ -189,7 +189,7 @@ If no sensor is available, return -1.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a copy of the list of neighboring zones.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(Neighbor)</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="neighbor.html#aaa_modules.layout_model.neighbor.Neighbor" title="aaa_modules.layout_model.neighbor.Neighbor">Neighbor</a>)</td>
 </tr>
 </tbody>
 </table>
@@ -375,6 +375,13 @@ Two sensors are considered the same if they link to the same channel.
 <li class="toctree-l1 current"><a class="reference internal" href="../../layout.html">Zone Layout API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zone_manager.html">ZoneManager</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Zone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neighbor.html">Neighbor &amp; NeighborType</a></li>
+<li class="toctree-l2"><a class="reference internal" href="device.html">device/Device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astro_sensor.html">device/AstroSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dimmer.html">device/Dimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="illuminance_sensor.html">device/IlluminanceSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="motion_sensor.html">device/MotionSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="switch.html">device/Switch</a></li>
 </ul>
 </li>
 </ul>
@@ -386,7 +393,7 @@ Two sensors are considered the same if they link to the same channel.
   <li><a href="../../layout.html">Zone Layout API</a><ul>
   <li><a href="../modules.html">&lt;no title&gt;</a><ul>
       <li>Previous: <a href="zone_manager.html" title="previous chapter">ZoneManager</a></li>
-      <li>Next: <a href="../../../scripts/scripts.html" title="next chapter">&lt;no title&gt;</a></li>
+      <li>Next: <a href="neighbor.html" title="next chapter">Neighbor &amp; NeighborType</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

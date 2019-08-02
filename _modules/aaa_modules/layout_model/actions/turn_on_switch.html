@@ -1,0 +1,220 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>aaa_modules.layout_model.actions.turn_on_switch &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for aaa_modules.layout_model.actions.turn_on_switch</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.neighbor</span> <span class="k">import</span> <span class="n">Neighbor</span><span class="p">,</span> <span class="n">NeighborType</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.switch</span> <span class="k">import</span> <span class="n">Light</span><span class="p">,</span> <span class="n">Switch</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.motion_sensor</span> <span class="k">import</span> <span class="n">MotionSensor</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.actions.action</span> <span class="k">import</span> <span class="n">Action</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.actions.turn_off_adjacent_zones</span> <span class="k">import</span> <span class="n">TurnOffAdjacentZones</span>
+
+<span class="kn">from</span> <span class="nn">org.slf4j</span> <span class="k">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">LoggerFactory</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;org.eclipse.smarthome.model.script.Rules&quot;</span><span class="p">)</span>
+
+<span class="n">DEBUG</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="TurnOnSwitch"><a class="viewcode-back" href="../../../../APIs/layout/modules/turn_on_switch.html#aaa_modules.layout_model.actions.turn_on_switch.TurnOnSwitch">[docs]</a><span class="k">class</span> <span class="nc">TurnOnSwitch</span><span class="p">(</span><span class="n">Action</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Turns on a switch (fan, dimmer or regular light), after being triggered by</span>
+<span class="sd">    a motion event.</span>
+<span class="sd">    If the switch is a dimmer or light, it is only turned on if:</span>
+<span class="sd">    1. It is evening time, or</span>
+<span class="sd">    2. The illuminance is below a threshold.</span>
+
+<span class="sd">    A light/dimmer switch won&#39;t be turned on if:</span>
+<span class="sd">    1. The light has the flag set to ignore motion event, or</span>
+<span class="sd">    2. The adjacent zone is of type OPEN_SPACE_MASTER with the light on, or</span>
+<span class="sd">    3. The light was jsut turned off, or</span>
+<span class="sd">    4. The neighbor zone has a light switch that shares the same motion sensor,</span>
+<span class="sd">    and that light switch was just recently turned off.</span>
+
+<span class="sd">    No matter whether the switch is turned on or not (see the condition above),</span>
+<span class="sd">    any adjacent zones of type OPEN_SPACE, and OPEN_SPACE_SLAVE that currently</span>
+<span class="sd">    has the light on, will be sent a command to shut off the light.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">DELAY_AFTER_LAST_OFF_TIME_IN_SECONDS</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The period of time in seconds (from the last timestamp a switch was</span>
+<span class="sd">    turned off) to ignore the motion sensor event. This takes care of the</span>
+<span class="sd">    scenario when the user manually turns off a light, but that physical</span>
+<span class="sd">    spot is covered by a motion sensor, which immediately turns on the light</span>
+<span class="sd">    again.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="TurnOnSwitch.onAction"><a class="viewcode-back" href="../../../../APIs/layout/modules/turn_on_switch.html#aaa_modules.layout_model.actions.turn_on_switch.TurnOnSwitch.onAction">[docs]</a>    <span class="k">def</span> <span class="nf">onAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">zone</span><span class="p">,</span> <span class="n">getZoneByIdFn</span><span class="p">):</span>
+        <span class="n">isProcessed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">canTurnOffAdjacentZones</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">lightOnTime</span> <span class="o">=</span> <span class="n">zone</span><span class="o">.</span><span class="n">isLightOnTime</span><span class="p">()</span>
+        <span class="n">zoneIlluminance</span> <span class="o">=</span> <span class="n">zone</span><span class="o">.</span><span class="n">getIlluminanceLevel</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="n">zone</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">Switch</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">switch</span><span class="o">.</span><span class="n">canBeTriggeredByMotionSensor</span><span class="p">():</span>
+                <span class="c1"># A special case: if a switch is configured not to be</span>
+                <span class="c1"># triggered by a motion sensor, it means there is already </span>
+                <span class="c1"># another switch sharing that motion sensor. In this case, we</span>
+                <span class="c1"># don&#39;t want to turn off the other switch.</span>
+                <span class="n">canTurnOffAdjacentZones</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: rejected - can&#39;t be triggerred by motion sensor&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">switch</span><span class="o">.</span><span class="n">getItemName</span><span class="p">()))</span>
+
+                <span class="k">continue</span>
+
+            <span class="c1"># Break if switch was just turned off.</span>
+            <span class="k">if</span> <span class="kc">None</span> <span class="o">!=</span> <span class="n">switch</span><span class="o">.</span><span class="n">getLastOffTimestampInSeconds</span><span class="p">():</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">switch</span><span class="o">.</span><span class="n">getLastOffTimestampInSeconds</span><span class="p">())</span> <span class="o">&lt;=</span> \
+                    <span class="n">TurnOnSwitch</span><span class="o">.</span><span class="n">DELAY_AFTER_LAST_OFF_TIME_IN_SECONDS</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: rejected - switch was just turned off&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">switch</span><span class="o">.</span><span class="n">getItemName</span><span class="p">()))</span>
+                    <span class="k">continue</span>
+
+            <span class="c1"># Break if the switch of a neighbor sharing the motion sensor was</span>
+            <span class="c1"># just turned off.</span>
+            <span class="n">openSpaceZones</span> <span class="o">=</span> <span class="p">[</span><span class="n">getZoneByIdFn</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">getZoneId</span><span class="p">())</span> \
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">zone</span><span class="o">.</span><span class="n">getNeighbors</span><span class="p">()</span> <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">isOpenSpace</span><span class="p">()]</span>
+            <span class="n">sharedMotionSensorZones</span> <span class="o">=</span> <span class="p">[</span><span class="n">z</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">openSpaceZones</span> 
+                <span class="k">if</span> <span class="n">zone</span><span class="o">.</span><span class="n">shareSensorWith</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">MotionSensor</span><span class="p">)]</span>
+            <span class="n">theirSwitches</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">z</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">Switch</span><span class="p">)</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">sharedMotionSensorZones</span><span class="p">],</span>
+                    <span class="p">[])</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">s</span><span class="o">.</span><span class="n">getLastOffTimestampInSeconds</span><span class="p">()</span> <span class="o">&lt;=</span> \
+                        <span class="n">TurnOnSwitch</span><span class="o">.</span><span class="n">DELAY_AFTER_LAST_OFF_TIME_IN_SECONDS</span> \
+                    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">theirSwitches</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: rejected - can&#39;t be triggerred by motion sensor&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">switch</span><span class="o">.</span><span class="n">getItemName</span><span class="p">()))</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">switch</span><span class="p">,</span> <span class="n">Light</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">lightOnTime</span> <span class="ow">or</span> <span class="n">switch</span><span class="o">.</span><span class="n">isLowIlluminance</span><span class="p">(</span><span class="n">zoneIlluminance</span><span class="p">):</span>
+                    <span class="n">isProcessed</span> <span class="o">=</span> <span class="kc">True</span>
+                    
+                <span class="k">if</span> <span class="n">isProcessed</span> <span class="ow">and</span> <span class="kc">None</span> <span class="o">!=</span> <span class="n">getZoneByIdFn</span><span class="p">:</span>
+                    <span class="n">masterZones</span> <span class="o">=</span> <span class="p">[</span><span class="n">getZoneByIdFn</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">getZoneId</span><span class="p">())</span> \
+                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">zone</span><span class="o">.</span><span class="n">getNeighbors</span><span class="p">()</span> \
+                        <span class="k">if</span> <span class="n">NeighborType</span><span class="o">.</span><span class="n">OPEN_SPACE_MASTER</span> <span class="o">==</span> <span class="n">n</span><span class="o">.</span><span class="n">getType</span><span class="p">()]</span>
+                    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">isLightOn</span><span class="p">()</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">masterZones</span><span class="p">):</span>
+                        <span class="n">isProcessed</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: rejected - a master zone&#39;s light is on&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                    <span class="n">switch</span><span class="o">.</span><span class="n">getItemName</span><span class="p">()))</span>
+
+                <span class="k">if</span> <span class="n">isProcessed</span><span class="p">:</span>
+                    <span class="n">switch</span><span class="o">.</span><span class="n">turnOn</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">switch</span><span class="o">.</span><span class="n">turnOn</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+                <span class="n">isProcessed</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Now shut off the light in any shared space zones</span>
+        <span class="k">if</span> <span class="n">canTurnOffAdjacentZones</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: turning off adjancent zone&#39;s light&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">switch</span><span class="o">.</span><span class="n">getItemName</span><span class="p">()))</span>
+            <span class="n">TurnOffAdjacentZones</span><span class="p">()</span><span class="o">.</span><span class="n">onAction</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">zone</span><span class="p">,</span> <span class="n">getZoneByIdFn</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">isProcessed</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../APIs/layout.html">Zone Layout API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

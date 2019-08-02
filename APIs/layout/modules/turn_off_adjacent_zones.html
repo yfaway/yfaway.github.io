@@ -1,0 +1,158 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>actions/TurnOffAdjacentZones &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="../../../scripts/scripts.html" />
+    <link rel="prev" title="Action" href="action.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-aaa_modules.layout_model.actions.turn_off_adjacent_zones">
+<span id="actions-turnoffadjacentzones"></span><h1>actions/TurnOffAdjacentZones<a class="headerlink" href="#module-aaa_modules.layout_model.actions.turn_off_adjacent_zones" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="aaa_modules.layout_model.actions.turn_off_adjacent_zones.TurnOffAdjacentZones">
+<em class="property">class </em><code class="descclassname">aaa_modules.layout_model.actions.turn_off_adjacent_zones.</code><code class="descname">TurnOffAdjacentZones</code><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/actions/turn_off_adjacent_zones.html#TurnOffAdjacentZones"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.actions.turn_off_adjacent_zones.TurnOffAdjacentZones" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn off the lights in the zones adjacent to the current zone if those zones
+are of the OPEN_SPACE and OPEN_SPACE_SLAVE type.</p>
+<dl class="method">
+<dt id="aaa_modules.layout_model.actions.turn_off_adjacent_zones.TurnOffAdjacentZones.onAction">
+<code class="descname">onAction</code><span class="sig-paren">(</span><em>events</em>, <em>zone</em>, <em>getZoneByIdFn</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/actions/turn_off_adjacent_zones.html#TurnOffAdjacentZones.onAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.actions.turn_off_adjacent_zones.TurnOffAdjacentZones.onAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclass must override this method with its own handling.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>events</strong> (<em>scope.events</em>) – </li>
+<li><strong>zone</strong> (<a class="reference internal" href="zone.html#aaa_modules.layout_model.zone.Zone" title="aaa_modules.layout_model.zone.Zone"><em>Zone</em></a>) – the zone where the action takes place</li>
+<li><strong>getZoneByIdFn</strong> (<em>lambda</em>) – a function that returns a Zone object given        a zone id string</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True if the event is processed; False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../layout.html">Zone Layout API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="zone_manager.html">ZoneManager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zone.html">Zone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neighbor.html">Neighbor &amp; NeighborType</a></li>
+<li class="toctree-l2"><a class="reference internal" href="device.html">Device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astro_sensor.html">device/AstroSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dimmer.html">device/Dimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="illuminance_sensor.html">device/IlluminanceSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="motion_sensor.html">device/MotionSensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="switch.html">device/Switch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="action.html">Action</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">actions/TurnOffAdjacentZones</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../layout.html">Zone Layout API</a><ul>
+  <li><a href="../modules.html">&lt;no title&gt;</a><ul>
+      <li>Previous: <a href="action.html" title="previous chapter">Action</a></li>
+      <li>Next: <a href="../../../scripts/scripts.html" title="next chapter">&lt;no title&gt;</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/APIs/layout/modules/turn_off_adjacent_zones.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
