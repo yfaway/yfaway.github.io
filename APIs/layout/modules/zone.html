@@ -36,10 +36,7 @@
             
   <div class="section" id="module-aaa_modules.layout_model.zone">
 <span id="zone"></span><h1>Zone<a class="headerlink" href="#module-aaa_modules.layout_model.zone" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="aaa_modules.layout_model.zone.Zone">
-<em class="property">class </em><code class="descclassname">aaa_modules.layout_model.zone.</code><code class="descname">Zone</code><span class="sig-paren">(</span><em>name</em>, <em>devices=[]</em>, <em>level=-1</em>, <em>neighbors=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represent a zone such as a room, foyer, porch, or lobby. 
+<p>Represent a zone such as a room, foyer, porch, or lobby. 
 Each zone holds a number of devices/sensors such as switches, motion sensors,
 or temperature sensors.</p>
 <p>A zone might have zero, one or multiple adjacent zones. The adjacent zones
@@ -61,11 +58,8 @@ See #getDevices(), #getDevicesByType().</p>
 <dl class="docutils">
 <dt>There are two sets of operation on each zone:</dt>
 <dd><ol class="first last arabic simple">
-<li>Active operations such as turn on a light/fan in a zone. These are
-represented by common functions such as #turnOnLights(),
-#turnOffLights(); and</li>
-<li>Passive operations triggered by events such onTimerExpired(),
-onSwitchTurnedOn(), and so on.</li>
+<li>Active operations such as turn on a light/fan in a zone. These are     represented by common functions such as #turnOnLights(),     #turnOffLights(); and</li>
+<li>Passive operations triggered by events such onTimerExpired(),     onSwitchTurnedOn(), and so on.</li>
 </ol>
 </dd>
 </dl>
@@ -79,6 +73,24 @@ for each of these events. For example, a motion event will turn on the light
 if it is dark or if it is evening time; a timer expiry event will turn off
 the associated light if it is currently on.</p>
 <p>&#64;Immutable (the Zone object only)</p>
+<dl class="class">
+<dt id="aaa_modules.layout_model.zone.Zone">
+<em class="property">class </em><code class="descclassname">aaa_modules.layout_model.zone.</code><code class="descname">Zone</code><span class="sig-paren">(</span><em>name</em>, <em>devices=[]</em>, <em>level=-1</em>, <em>neighbors=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new zone.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) – the zone name</li>
+<li><strong>devices</strong> (<em>list</em><em>(</em><a class="reference internal" href="device.html#aaa_modules.layout_model.device.Device" title="aaa_modules.layout_model.device.Device"><em>Device</em></a><em>)</em>) – the list of Device objects</li>
+<li><strong>level</strong> (<a class="reference internal" href="../../utilities/modules/alert.html#aaa_modules.alert.Level" title="aaa_modules.alert.Level"><em>Level</em></a>) – the zone’s physical level</li>
+<li><strong>neighbors</strong> (<em>list</em><em>(</em><em>Neigbor</em><em>)</em>) – the list of optional neighbor zones.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="aaa_modules.layout_model.zone.Zone.addDevice">
 <code class="descname">addDevice</code><span class="sig-paren">(</span><em>device</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.addDevice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.addDevice" title="Permalink to this definition">¶</a></dt>
@@ -376,14 +388,18 @@ Two sensors are considered the same if they link to the same channel.
 <li class="toctree-l2"><a class="reference internal" href="zone_manager.html">ZoneManager</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Zone</a></li>
 <li class="toctree-l2"><a class="reference internal" href="neighbor.html">Neighbor &amp; NeighborType</a></li>
-<li class="toctree-l2"><a class="reference internal" href="device.html">device/Device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="device.html">Device</a></li>
 <li class="toctree-l2"><a class="reference internal" href="astro_sensor.html">device/AstroSensor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dimmer.html">device/Dimmer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="illuminance_sensor.html">device/IlluminanceSensor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="motion_sensor.html">device/MotionSensor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="switch.html">device/Switch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="action.html">Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="turn_off_adjacent_zones.html">actions/TurnOffAdjacentZones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="turn_on_switch.html">actions/TurnOnSwitch</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../utilities.html">Utilities API</a></li>
 </ul>
 
 <div class="relations">

@@ -1,0 +1,240 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>aaa_modules.alert_manager &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for aaa_modules.alert_manager</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">org.slf4j</span> <span class="k">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">LoggerFactory</span>
+<span class="kn">from</span> <span class="nn">core.actions</span> <span class="k">import</span> <span class="n">Mail</span>
+
+<span class="kn">from</span> <span class="nn">aaa_modules</span> <span class="k">import</span> <span class="n">alert</span>
+<span class="n">reload</span><span class="p">(</span><span class="n">alert</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.alert</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">aaa_modules</span> <span class="k">import</span> <span class="n">cast_manager</span>
+<span class="n">reload</span><span class="p">(</span><span class="n">cast_manager</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">aaa_modules</span> <span class="k">import</span> <span class="n">cast_manager</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;org.eclipse.smarthome.model.script.Rules&quot;</span><span class="p">)</span>
+
+<span class="n">_EMAIL_PROPERTIES_FILE</span> <span class="o">=</span> <span class="s1">&#39;/etc/openhab2/transform/owner-email-addresses.map&#39;</span>
+<span class="n">_EMAIL_KEY</span> <span class="o">=</span> <span class="s1">&#39;ALL_OWNER_EMAIL_ADDRESSES&#39;</span>
+
+<div class="viewcode-block" id="AlertManager"><a class="viewcode-back" href="../../APIs/utilities/modules/alert_manager.html#aaa_modules.alert_manager.AlertManager">[docs]</a><span class="k">class</span> <span class="nc">AlertManager</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Process an alert.</span>
+<span class="sd">    The current implementation will send out an email. If the alert is at</span>
+<span class="sd">    critical level, a TTS message will also be sent to all audio sinks.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_testMode</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    If set, the TTS message won&#39;t be sent to the chromecasts.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_lastEmailedSubject</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Used in unit testing to make sure that the email alert function was invoked,</span>
+<span class="sd">    without having to sent any actual email.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_moduleTimestamps</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Tracks the timestamp of the last alert in a module.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="AlertManager.processAlert"><a class="viewcode-back" href="../../APIs/utilities/modules/alert_manager.html#aaa_modules.alert_manager.AlertManager.processAlert">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">processAlert</span><span class="p">(</span><span class="n">alert</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Processes the provided alert.</span>
+<span class="sd">        If the alert&#39;s level is WARNING or CRITICAL, the TTS subject will be played</span>
+<span class="sd">        on the ChromeCasts.</span>
+
+<span class="sd">        :param Alert alert: the alert to be processed</span>
+<span class="sd">        :return: True if alert was processed; False otherwise.</span>
+<span class="sd">        :raise: ValueError if alert is None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="kc">None</span> <span class="o">==</span> <span class="n">alert</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid alert.&#39;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;Processing alert</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">alert</span><span class="o">.</span><span class="n">toString</span><span class="p">()))</span>
+
+        <span class="k">if</span> <span class="kc">None</span> <span class="o">!=</span> <span class="n">alert</span><span class="o">.</span><span class="n">getModule</span><span class="p">():</span>
+            <span class="n">intervalInSeconds</span> <span class="o">=</span> <span class="n">alert</span><span class="o">.</span><span class="n">getIntervalBetweenAlertsInMinutes</span><span class="p">()</span> <span class="o">*</span> <span class="mi">60</span>
+
+            <span class="k">if</span> <span class="n">alert</span><span class="o">.</span><span class="n">getModule</span><span class="p">()</span> <span class="ow">in</span> <span class="n">AlertManager</span><span class="o">.</span><span class="n">_moduleTimestamps</span><span class="p">:</span>
+                <span class="n">previousTime</span> <span class="o">=</span> <span class="n">AlertManager</span><span class="o">.</span><span class="n">_moduleTimestamps</span><span class="p">[</span><span class="n">alert</span><span class="o">.</span><span class="n">getModule</span><span class="p">()]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">previousTime</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">intervalInSeconds</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="n">AlertManager</span><span class="o">.</span><span class="n">_moduleTimestamps</span><span class="p">[</span><span class="n">alert</span><span class="o">.</span><span class="n">getModule</span><span class="p">()]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="n">AlertManager</span><span class="o">.</span><span class="n">_emailAlert</span><span class="p">(</span><span class="n">alert</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">alert</span><span class="o">.</span><span class="n">isWarningLevel</span><span class="p">()</span> <span class="ow">or</span> <span class="n">alert</span><span class="o">.</span><span class="n">isCriticalLevel</span><span class="p">():</span>
+            <span class="n">cast_manager</span><span class="o">.</span><span class="n">playMessage</span><span class="p">(</span><span class="n">alert</span><span class="o">.</span><span class="n">getSubject</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="AlertManager.reset"><a class="viewcode-back" href="../../APIs/utilities/modules/alert_manager.html#aaa_modules.alert_manager.AlertManager.reset">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">():</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Reset the internal states of this class.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">AlertManager</span><span class="o">.</span><span class="n">_lastEmailedSubject</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">AlertManager</span><span class="o">.</span><span class="n">_moduleTimestamps</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_emailAlert</span><span class="p">(</span><span class="n">alert</span><span class="p">):</span>
+        <span class="n">emailAddresses</span> <span class="o">=</span> <span class="n">alert</span><span class="o">.</span><span class="n">getEmailAddresses</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">[]</span> <span class="o">==</span> <span class="n">emailAddresses</span><span class="p">:</span>
+            <span class="n">emailAddresses</span> <span class="o">=</span> <span class="n">AlertManager</span><span class="o">.</span><span class="n">_getEmailAddresses</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="kc">None</span> <span class="o">==</span> <span class="n">emailAddresses</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">emailAddresses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Missing email addresses.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">AlertManager</span><span class="o">.</span><span class="n">_testMode</span><span class="p">:</span>
+            <span class="n">body</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">alert</span><span class="o">.</span><span class="n">getBody</span><span class="p">()</span> <span class="o">==</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">alert</span><span class="o">.</span><span class="n">getBody</span><span class="p">()</span>
+            <span class="n">Mail</span><span class="o">.</span><span class="n">sendMail</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">emailAddresses</span><span class="p">),</span> <span class="n">alert</span><span class="o">.</span><span class="n">getSubject</span><span class="p">(),</span>
+                    <span class="n">alert</span><span class="o">.</span><span class="n">getBody</span><span class="p">(),</span> <span class="n">alert</span><span class="o">.</span><span class="n">getAttachmentUrls</span><span class="p">())</span>
+
+        <span class="n">AlertManager</span><span class="o">.</span><span class="n">_lastEmailedSubject</span> <span class="o">=</span> <span class="n">alert</span><span class="o">.</span><span class="n">getSubject</span><span class="p">()</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_getEmailAddresses</span><span class="p">():</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :return: list of email addresses</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="n">AlertManager</span><span class="o">.</span><span class="n">_loadProperties</span><span class="p">(</span><span class="n">_EMAIL_PROPERTIES_FILE</span><span class="p">)</span>
+        <span class="n">emails</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="n">_EMAIL_KEY</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">emails</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_loadProperties</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="n">comment_char</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Read the file passed as parameter as a properties file.</span>
+<span class="sd">        @see https://stackoverflow.com/a/31852401</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">props</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+	    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+		<span class="n">l</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">l</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">l</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">comment_char</span><span class="p">):</span>
+		    <span class="n">key_value</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span>
+		    <span class="n">key</span> <span class="o">=</span> <span class="n">key_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+		    <span class="n">value</span> <span class="o">=</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key_value</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> 
+		    <span class="n">props</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span> 
+	<span class="k">return</span> <span class="n">props</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_setTestMode</span><span class="p">(</span><span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Switches on/off the test mode.</span>
+<span class="sd">        @param mode boolean</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">AlertManager</span><span class="o">.</span><span class="n">_testMode</span> <span class="o">=</span> <span class="n">mode</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../APIs/layout.html">Zone Layout API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../APIs/utilities.html">Utilities API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

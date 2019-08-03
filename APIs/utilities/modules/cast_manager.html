@@ -1,0 +1,269 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>CastManager &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Chromecast" href="chromecast.html" />
+    <link rel="prev" title="CameraUtilities" href="camera_utilities.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-aaa_modules.cast_manager">
+<span id="castmanager"></span><h1>CastManager<a class="headerlink" href="#module-aaa_modules.cast_manager" title="Permalink to this headline">¶</a></h1>
+<p>Contains functions that work with Google Chromecasts and Google Home.
+&#64;see ChromeCast</p>
+<dl class="function">
+<dt id="aaa_modules.cast_manager.findCasts">
+<code class="descclassname">aaa_modules.cast_manager.</code><code class="descname">findCasts</code><span class="sig-paren">(</span><em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/cast_manager.html#findCasts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.cast_manager.findCasts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of ChromeCast. If prefix is UNDEF, NULL, or “ALL”, return
+all casts. Otherwise returns the matching casts.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prefix</strong> (<em>StringItem_or_str</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="chromecast.html#aaa_modules.chromecast.ChromeCast" title="aaa_modules.chromecast.ChromeCast">ChromeCast</a>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="aaa_modules.cast_manager.getAllCasts">
+<code class="descclassname">aaa_modules.cast_manager.</code><code class="descname">getAllCasts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/cast_manager.html#getAllCasts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.cast_manager.getAllCasts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all available ChromeCast objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="chromecast.html#aaa_modules.chromecast.ChromeCast" title="aaa_modules.chromecast.ChromeCast">ChromeCast</a>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="aaa_modules.cast_manager.getAllStreamNames">
+<code class="descclassname">aaa_modules.cast_manager.</code><code class="descname">getAllStreamNames</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/cast_manager.html#getAllStreamNames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.cast_manager.getAllStreamNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of stream names.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(str)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="aaa_modules.cast_manager.getFirstFloorCasts">
+<code class="descclassname">aaa_modules.cast_manager.</code><code class="descname">getFirstFloorCasts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/cast_manager.html#getFirstFloorCasts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.cast_manager.getFirstFloorCasts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the ChromeCast objects on the first floor.
+:rtype: list(ChromeCast)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="aaa_modules.cast_manager.getStreamUrl">
+<code class="descclassname">aaa_modules.cast_manager.</code><code class="descname">getStreamUrl</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/cast_manager.html#getStreamUrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.cast_manager.getStreamUrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the stream associated with the given name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str or None if not found</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="aaa_modules.cast_manager.pause">
+<code class="descclassname">aaa_modules.cast_manager.</code><code class="descname">pause</code><span class="sig-paren">(</span><em>casts=[&lt;aaa_modules.chromecast.ChromeCast instance&gt;, &lt;aaa_modules.chromecast.ChromeCast instance&gt;, &lt;aaa_modules.chromecast.ChromeCast instance&gt;]</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/cast_manager.html#pause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.cast_manager.pause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pauses the passed-in chrome cast player.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>casts</strong> (<em>list</em><em>(</em><a class="reference internal" href="chromecast.html#aaa_modules.chromecast.ChromeCast" title="aaa_modules.chromecast.ChromeCast"><em>ChromeCast</em></a><em>)</em>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="aaa_modules.cast_manager.playMessage">
+<code class="descclassname">aaa_modules.cast_manager.</code><code class="descname">playMessage</code><span class="sig-paren">(</span><em>message, casts=[&lt;aaa_modules.chromecast.ChromeCast instance&gt;, &lt;aaa_modules.chromecast.ChromeCast instance&gt;, &lt;aaa_modules.chromecast.ChromeCast instance&gt;], volume=50</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/cast_manager.html#playMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.cast_manager.playMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Play the given message on one or more ChromeCast and wait till it finishes 
+(up to MAX_SAY_WAIT_TIME_IN_SECONDS seconds). Afterward, pause the player.
+After this call, cast.isActive() will return False.</p>
+<p>If _testMode is True, no message will be sent to the cast.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>message</strong> (<em>str</em>) – the message to tts</li>
+<li><strong>casts</strong> (<em>list</em><em>(</em><a class="reference internal" href="chromecast.html#aaa_modules.chromecast.ChromeCast" title="aaa_modules.chromecast.ChromeCast"><em>ChromeCast</em></a><em>)</em>) – </li>
+<li><strong>volume</strong> (<em>int</em>) – the volume value, 0 to 100 inclusive</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">boolean True if success; False if stream name is invalid.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raise:</th><td class="field-body"><p class="first last">ValueError if volume is not in the 0 - 100 inclusive range, or if    message is None or empty.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="aaa_modules.cast_manager.playStream">
+<code class="descclassname">aaa_modules.cast_manager.</code><code class="descname">playStream</code><span class="sig-paren">(</span><em>name, casts=[&lt;aaa_modules.chromecast.ChromeCast instance&gt;, &lt;aaa_modules.chromecast.ChromeCast instance&gt;, &lt;aaa_modules.chromecast.ChromeCast instance&gt;], volume=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/cast_manager.html#playStream"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.cast_manager.playStream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Play the given stream url.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) – see _STREAMS</li>
+<li><strong>casts</strong> (<em>list</em><em>(</em><a class="reference internal" href="chromecast.html#aaa_modules.chromecast.ChromeCast" title="aaa_modules.chromecast.ChromeCast"><em>ChromeCast</em></a><em>)</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">boolean True if success; False if stream name is invalid.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="aaa_modules.cast_manager.resume">
+<code class="descclassname">aaa_modules.cast_manager.</code><code class="descname">resume</code><span class="sig-paren">(</span><em>casts=[&lt;aaa_modules.chromecast.ChromeCast instance&gt;, &lt;aaa_modules.chromecast.ChromeCast instance&gt;, &lt;aaa_modules.chromecast.ChromeCast instance&gt;]</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/cast_manager.html#resume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.cast_manager.resume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resumes playing on the passed-in chrome casts.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>casts</strong> (<em>list</em><em>(</em><a class="reference internal" href="chromecast.html#aaa_modules.chromecast.ChromeCast" title="aaa_modules.chromecast.ChromeCast"><em>ChromeCast</em></a><em>)</em>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../layout.html">Zone Layout API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../utilities.html">Utilities API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alert_manager.html">AlertManager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="alert.html">Alert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camera_utilities.html">CameraUtilities</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">CastManager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chromecast.html">Chromecast</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../utilities.html">Utilities API</a><ul>
+  <li><a href="../utilities-modules.html">&lt;no title&gt;</a><ul>
+      <li>Previous: <a href="camera_utilities.html" title="previous chapter">CameraUtilities</a></li>
+      <li>Next: <a href="chromecast.html" title="next chapter">Chromecast</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/APIs/utilities/modules/cast_manager.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

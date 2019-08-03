@@ -1,0 +1,309 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>aaa_modules.alert &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for aaa_modules.alert</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">org.slf4j</span> <span class="k">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">LoggerFactory</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;org.eclipse.smarthome.model.script.Rules&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Level"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Level">[docs]</a><span class="k">class</span> <span class="nc">Level</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The alert levels.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">INFO</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&#39;&#39;&#39; INFO &#39;&#39;&#39;</span>
+
+    <span class="n">WARNING</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&#39;&#39;&#39; WARNING &#39;&#39;&#39;</span>
+
+    <span class="n">CRITICAL</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="sd">&#39;&#39;&#39; CRITICAL &#39;&#39;&#39;</span></div>
+
+<div class="viewcode-block" id="Alert"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert">[docs]</a><span class="k">class</span> <span class="nc">Alert</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Contains information about the alert.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="Alert.createInfoAlert"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.createInfoAlert">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">createInfoAlert</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">attachmentUrls</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">intervalBetweenAlertsInMinutes</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates an INFO alert.</span>
+
+<span class="sd">        :param string subject:</span>
+<span class="sd">        :param list(str) attachmentUrls: list of URL attachment strings:</span>
+<span class="sd">        :param string module: (optional)</span>
+<span class="sd">        :param int intervalBetweenAlertsInMinutes: (optional)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">Level</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">attachmentUrls</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span>
+                <span class="n">intervalBetweenAlertsInMinutes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Alert.createWarningAlert"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.createWarningAlert">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">createWarningAlert</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">attachmentUrls</span> <span class="o">=</span> <span class="p">[],</span>
+           <span class="n">module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">intervalBetweenAlertsInMinutes</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates a WARNING alert.</span>
+
+<span class="sd">        :param string subject:</span>
+<span class="sd">        :param list(str) attachmentUrls: list of URL attachment strings:</span>
+<span class="sd">        :param string module: (optional)</span>
+<span class="sd">        :param int intervalBetweenAlertsInMinutes: (optional)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">Level</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">attachmentUrls</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span>
+                <span class="n">intervalBetweenAlertsInMinutes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Alert.createCriticalAlert"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.createCriticalAlert">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">createCriticalAlert</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">attachmentUrls</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">intervalBetweenAlertsInMinutes</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates a CRITICAL alert.</span>
+
+<span class="sd">        :param string subject:</span>
+<span class="sd">        :param list(str) attachmentUrls: list of URL attachment strings:</span>
+<span class="sd">        :param string module: (optional)</span>
+<span class="sd">        :param int intervalBetweenAlertsInMinutes: (optional)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">Level</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">attachmentUrls</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span>
+                <span class="n">intervalBetweenAlertsInMinutes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Alert.fromJson"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.fromJson">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">fromJson</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">jsonString</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates a new object from information in the json string. This method</span>
+<span class="sd">        is used for alerts coming in from outside the jsr223 framework; they </span>
+<span class="sd">        will be in JSON format.</span>
+<span class="sd">        Accepted keys: subject, body, level (&#39;info&#39;, &#39;warning&#39;, or &#39;critical&#39;).</span>
+
+<span class="sd">        :param str jsonString:</span>
+<span class="sd">        :raise: ValueError if jsonString contains invalid values</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c1"># set strict to false to allow control characters in the json string</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">jsonString</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">subject</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="kc">None</span> <span class="o">==</span> <span class="n">subject</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span> <span class="o">==</span> <span class="n">subject</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Missing subject value.&#39;</span><span class="p">)</span>
+
+        <span class="n">body</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">levelMappings</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="n">Level</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+            <span class="s1">&#39;warning&#39;</span><span class="p">:</span> <span class="n">Level</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+            <span class="s1">&#39;critical&#39;</span><span class="p">:</span> <span class="n">Level</span><span class="o">.</span><span class="n">CRITICAL</span>
+        <span class="p">}</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">Level</span><span class="o">.</span><span class="n">INFO</span>
+        <span class="k">if</span> <span class="s1">&#39;level&#39;</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
+            <span class="n">level</span> <span class="o">=</span> <span class="n">levelMappings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;level&#39;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="kc">None</span> <span class="o">==</span> <span class="n">level</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid alert level.&#39;</span><span class="p">)</span>
+
+        <span class="n">module</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;module&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;&#39;</span> <span class="o">==</span> <span class="n">module</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">intervalBetweenAlertsInMinutes</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s1">&#39;intervalBetweenAlertsInMinutes&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="kc">None</span> <span class="o">!=</span> <span class="n">module</span> <span class="ow">and</span> <span class="n">intervalBetweenAlertsInMinutes</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid intervalBetweenAlertsInMinutes value: &#39;</span> 
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">intervalBetweenAlertsInMinutes</span><span class="p">))</span>
+
+        <span class="n">attachmentUrls</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">emailAddresses</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;emailAddresses&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">attachmentUrls</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span>
+                <span class="n">intervalBetweenAlertsInMinutes</span><span class="p">,</span> <span class="n">emailAddresses</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">attachmentUrls</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">intervalBetweenAlertsInMinutes</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">emailAddresses</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subject</span> <span class="o">=</span> <span class="n">subject</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attachmentUrls</span> <span class="o">=</span> <span class="n">attachmentUrls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">module</span> <span class="o">=</span> <span class="n">module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intervalBetweenAlertsInMinutes</span> <span class="o">=</span> <span class="n">intervalBetweenAlertsInMinutes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emailAddresses</span> <span class="o">=</span> <span class="n">emailAddresses</span>
+
+<div class="viewcode-block" id="Alert.getSubject"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.getSubject">[docs]</a>    <span class="k">def</span> <span class="nf">getSubject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject</span></div>
+
+<div class="viewcode-block" id="Alert.getBody"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.getBody">[docs]</a>    <span class="k">def</span> <span class="nf">getBody</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span></div>
+
+<div class="viewcode-block" id="Alert.getAttachmentUrls"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.getAttachmentUrls">[docs]</a>    <span class="k">def</span> <span class="nf">getAttachmentUrls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :rtype: list(str)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attachmentUrls</span></div>
+
+<div class="viewcode-block" id="Alert.getModule"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.getModule">[docs]</a>    <span class="k">def</span> <span class="nf">getModule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the alert module</span>
+
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span></div>
+
+<div class="viewcode-block" id="Alert.getEmailAddresses"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.getEmailAddresses">[docs]</a>    <span class="k">def</span> <span class="nf">getEmailAddresses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the overriding email addresses to be used instead of the default</span>
+<span class="sd">        email addresses.</span>
+
+<span class="sd">        :return: a list of email addresses; empty list if not specified</span>
+<span class="sd">        :rtype: list(str)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="p">[]</span> <span class="k">if</span> <span class="kc">None</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">emailAddresses</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">emailAddresses</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Alert.getIntervalBetweenAlertsInMinutes"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.getIntervalBetweenAlertsInMinutes">[docs]</a>    <span class="k">def</span> <span class="nf">getIntervalBetweenAlertsInMinutes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">intervalBetweenAlertsInMinutes</span></div>
+
+<div class="viewcode-block" id="Alert.isInfoLevel"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.isInfoLevel">[docs]</a>    <span class="k">def</span> <span class="nf">isInfoLevel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Level</span><span class="o">.</span><span class="n">INFO</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span></div>
+
+<div class="viewcode-block" id="Alert.isWarningLevel"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.isWarningLevel">[docs]</a>    <span class="k">def</span> <span class="nf">isWarningLevel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Level</span><span class="o">.</span><span class="n">WARNING</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span></div>
+
+<div class="viewcode-block" id="Alert.isCriticalLevel"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.isCriticalLevel">[docs]</a>    <span class="k">def</span> <span class="nf">isCriticalLevel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Level</span><span class="o">.</span><span class="n">CRITICAL</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span></div>
+
+<div class="viewcode-block" id="Alert.toString"><a class="viewcode-back" href="../../APIs/utilities/modules/alert.html#aaa_modules.alert.Alert.toString">[docs]</a>    <span class="k">def</span> <span class="nf">toString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :return: a user readable string containing this object&#39;s info.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">returnedVal</span> <span class="o">=</span> <span class="sa">u</span><span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isInfoLevel</span><span class="p">():</span>
+            <span class="n">returnedVal</span> <span class="o">+=</span> <span class="s1">&#39;[INFO]&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">isWarningLevel</span><span class="p">():</span>
+            <span class="n">returnedVal</span> <span class="o">+=</span> <span class="s1">&#39;[WARNING]&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">returnedVal</span> <span class="o">+=</span> <span class="s1">&#39;[CRITICAL]&#39;</span>
+
+        <span class="n">returnedVal</span> <span class="o">+=</span> <span class="sa">u</span><span class="s1">&#39; </span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getSubject</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getBody</span><span class="p">(),</span> 
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getAttachmentUrls</span><span class="p">()))</span>
+
+        <span class="k">return</span> <span class="n">returnedVal</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../APIs/layout.html">Zone Layout API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../APIs/utilities.html">Utilities API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,368 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Alert &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="CameraUtilities" href="camera_utilities.html" />
+    <link rel="prev" title="AlertManager" href="alert_manager.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-aaa_modules.alert">
+<span id="alert"></span><h1>Alert<a class="headerlink" href="#module-aaa_modules.alert" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="aaa_modules.alert.Alert">
+<em class="property">class </em><code class="descclassname">aaa_modules.alert.</code><code class="descname">Alert</code><span class="sig-paren">(</span><em>level</em>, <em>subject</em>, <em>body=None</em>, <em>attachmentUrls=[]</em>, <em>module=None</em>, <em>intervalBetweenAlertsInMinutes=-1</em>, <em>emailAddresses=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains information about the alert.</p>
+<dl class="classmethod">
+<dt id="aaa_modules.alert.Alert.createCriticalAlert">
+<em class="property">classmethod </em><code class="descname">createCriticalAlert</code><span class="sig-paren">(</span><em>subject</em>, <em>body=None</em>, <em>attachmentUrls=[]</em>, <em>module=None</em>, <em>intervalBetweenAlertsInMinutes=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.createCriticalAlert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.createCriticalAlert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a CRITICAL alert.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subject</strong> (<em>string</em>) – </li>
+<li><strong>attachmentUrls</strong> (<em>list</em><em>(</em><em>str</em><em>)</em>) – list of URL attachment strings:</li>
+<li><strong>module</strong> (<em>string</em>) – (optional)</li>
+<li><strong>intervalBetweenAlertsInMinutes</strong> (<em>int</em>) – (optional)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="aaa_modules.alert.Alert.createInfoAlert">
+<em class="property">classmethod </em><code class="descname">createInfoAlert</code><span class="sig-paren">(</span><em>subject</em>, <em>body=None</em>, <em>attachmentUrls=[]</em>, <em>module=None</em>, <em>intervalBetweenAlertsInMinutes=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.createInfoAlert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.createInfoAlert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an INFO alert.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subject</strong> (<em>string</em>) – </li>
+<li><strong>attachmentUrls</strong> (<em>list</em><em>(</em><em>str</em><em>)</em>) – list of URL attachment strings:</li>
+<li><strong>module</strong> (<em>string</em>) – (optional)</li>
+<li><strong>intervalBetweenAlertsInMinutes</strong> (<em>int</em>) – (optional)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="aaa_modules.alert.Alert.createWarningAlert">
+<em class="property">classmethod </em><code class="descname">createWarningAlert</code><span class="sig-paren">(</span><em>subject</em>, <em>body=None</em>, <em>attachmentUrls=[]</em>, <em>module=None</em>, <em>intervalBetweenAlertsInMinutes=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.createWarningAlert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.createWarningAlert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a WARNING alert.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subject</strong> (<em>string</em>) – </li>
+<li><strong>attachmentUrls</strong> (<em>list</em><em>(</em><em>str</em><em>)</em>) – list of URL attachment strings:</li>
+<li><strong>module</strong> (<em>string</em>) – (optional)</li>
+<li><strong>intervalBetweenAlertsInMinutes</strong> (<em>int</em>) – (optional)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="aaa_modules.alert.Alert.fromJson">
+<em class="property">classmethod </em><code class="descname">fromJson</code><span class="sig-paren">(</span><em>jsonString</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.fromJson"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.fromJson" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new object from information in the json string. This method
+is used for alerts coming in from outside the jsr223 framework; they 
+will be in JSON format.
+Accepted keys: subject, body, level (‘info’, ‘warning’, or ‘critical’).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>jsonString</strong> (<em>str</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raise:</th><td class="field-body">ValueError if jsonString contains invalid values</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.alert.Alert.getAttachmentUrls">
+<code class="descname">getAttachmentUrls</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.getAttachmentUrls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.getAttachmentUrls" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(str)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.alert.Alert.getBody">
+<code class="descname">getBody</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.getBody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.getBody" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.alert.Alert.getEmailAddresses">
+<code class="descname">getEmailAddresses</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.getEmailAddresses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.getEmailAddresses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the overriding email addresses to be used instead of the default
+email addresses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of email addresses; empty list if not specified</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(str)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.alert.Alert.getIntervalBetweenAlertsInMinutes">
+<code class="descname">getIntervalBetweenAlertsInMinutes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.getIntervalBetweenAlertsInMinutes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.getIntervalBetweenAlertsInMinutes" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.alert.Alert.getModule">
+<code class="descname">getModule</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.getModule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.getModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the alert module</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.alert.Alert.getSubject">
+<code class="descname">getSubject</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.getSubject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.getSubject" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.alert.Alert.isCriticalLevel">
+<code class="descname">isCriticalLevel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.isCriticalLevel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.isCriticalLevel" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.alert.Alert.isInfoLevel">
+<code class="descname">isInfoLevel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.isInfoLevel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.isInfoLevel" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.alert.Alert.isWarningLevel">
+<code class="descname">isWarningLevel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.isWarningLevel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.isWarningLevel" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.alert.Alert.toString">
+<code class="descname">toString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Alert.toString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Alert.toString" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a user readable string containing this object’s info.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="aaa_modules.alert.Level">
+<em class="property">class </em><code class="descclassname">aaa_modules.alert.</code><code class="descname">Level</code><a class="reference internal" href="../../../_modules/aaa_modules/alert.html#Level"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.alert.Level" title="Permalink to this definition">¶</a></dt>
+<dd><p>The alert levels.</p>
+<dl class="attribute">
+<dt id="aaa_modules.alert.Level.CRITICAL">
+<code class="descname">CRITICAL</code><em class="property"> = 3</em><a class="headerlink" href="#aaa_modules.alert.Level.CRITICAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>CRITICAL</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="aaa_modules.alert.Level.INFO">
+<code class="descname">INFO</code><em class="property"> = 1</em><a class="headerlink" href="#aaa_modules.alert.Level.INFO" title="Permalink to this definition">¶</a></dt>
+<dd><p>INFO</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="aaa_modules.alert.Level.WARNING">
+<code class="descname">WARNING</code><em class="property"> = 2</em><a class="headerlink" href="#aaa_modules.alert.Level.WARNING" title="Permalink to this definition">¶</a></dt>
+<dd><p>WARNING</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../layout.html">Zone Layout API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../utilities.html">Utilities API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alert_manager.html">AlertManager</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Alert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camera_utilities.html">CameraUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cast_manager.html">CastManager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chromecast.html">Chromecast</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../utilities.html">Utilities API</a><ul>
+  <li><a href="../utilities-modules.html">&lt;no title&gt;</a><ul>
+      <li>Previous: <a href="alert_manager.html" title="previous chapter">AlertManager</a></li>
+      <li>Next: <a href="camera_utilities.html" title="next chapter">CameraUtilities</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/APIs/utilities/modules/alert.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

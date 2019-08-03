@@ -1,0 +1,298 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Chromecast &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="../../../scripts/scripts.html" />
+    <link rel="prev" title="CastManager" href="cast_manager.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-aaa_modules.chromecast">
+<span id="chromecast"></span><h1>Chromecast<a class="headerlink" href="#module-aaa_modules.chromecast" title="Permalink to this headline">¶</a></h1>
+<p>Represents a Chromecast, Chromecast Audio, or a Google Home device.</p>
+<dl class="class">
+<dt id="aaa_modules.chromecast.ChromeCast">
+<em class="property">class </em><code class="descclassname">aaa_modules.chromecast.</code><code class="descname">ChromeCast</code><span class="sig-paren">(</span><em>prefix</em>, <em>sinkName</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/chromecast.html#ChromeCast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.chromecast.ChromeCast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ctor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>prefix</strong> (<em>str</em>) – the item name prefix, as defined in the .item file. By        convention, other channels of this device will have this naming         pattern: {prefix}Idling, {prefix}Title, {prefix}Player, and so on.</li>
+<li><strong>sinkName</strong> (<em>str</em>) – the sink name for voice and audio play. The sink         name can be retrieved by running “openhab-cli console” and then         “smarthome:audio sinks”.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="aaa_modules.chromecast.ChromeCast.getIdleItemName">
+<code class="descname">getIdleItemName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/chromecast.html#ChromeCast.getIdleItemName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.chromecast.ChromeCast.getIdleItemName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the player item for this chromecast object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.chromecast.ChromeCast.getLastTtsMessage">
+<code class="descname">getLastTtsMessage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/chromecast.html#ChromeCast.getLastTtsMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.chromecast.ChromeCast.getLastTtsMessage" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.chromecast.ChromeCast.getPlayerName">
+<code class="descname">getPlayerName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/chromecast.html#ChromeCast.getPlayerName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.chromecast.ChromeCast.getPlayerName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the player item for this chromecast object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.chromecast.ChromeCast.getPrefix">
+<code class="descname">getPrefix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/chromecast.html#ChromeCast.getPrefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.chromecast.ChromeCast.getPrefix" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.chromecast.ChromeCast.getSinkName">
+<code class="descname">getSinkName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/chromecast.html#ChromeCast.getSinkName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.chromecast.ChromeCast.getSinkName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the sink name for Voice.say and Audio.playStream usages.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.chromecast.ChromeCast.getStreamName">
+<code class="descname">getStreamName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/chromecast.html#ChromeCast.getStreamName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.chromecast.ChromeCast.getStreamName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current stream name or None if no stream set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.chromecast.ChromeCast.getStreamUrl">
+<code class="descname">getStreamUrl</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/chromecast.html#ChromeCast.getStreamUrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.chromecast.ChromeCast.getStreamUrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current stream Uri or None if no stream set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.chromecast.ChromeCast.getVolumeName">
+<code class="descname">getVolumeName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/chromecast.html#ChromeCast.getVolumeName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.chromecast.ChromeCast.getVolumeName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the volume item for this chromecast object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.chromecast.ChromeCast.hasTitle">
+<code class="descname">hasTitle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/chromecast.html#ChromeCast.hasTitle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.chromecast.ChromeCast.hasTitle" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.chromecast.ChromeCast.isActive">
+<code class="descname">isActive</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/chromecast.html#ChromeCast.isActive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.chromecast.ChromeCast.isActive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true if the the chromecast is playing something.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>castItemPrefix</strong> (<em>str</em>) – the chrome cast item name</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.chromecast.ChromeCast.setStream">
+<code class="descname">setStream</code><span class="sig-paren">(</span><em>streamName</em>, <em>streamUrl</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/chromecast.html#ChromeCast.setStream"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.chromecast.ChromeCast.setStream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Associate a stream URI with this object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>streamUrl</strong> (<em>str</em>) – </li>
+<li><strong>streamName</strong> (<em>str</em>) – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../layout.html">Zone Layout API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../utilities.html">Utilities API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alert_manager.html">AlertManager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="alert.html">Alert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camera_utilities.html">CameraUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cast_manager.html">CastManager</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Chromecast</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../utilities.html">Utilities API</a><ul>
+  <li><a href="../utilities-modules.html">&lt;no title&gt;</a><ul>
+      <li>Previous: <a href="cast_manager.html" title="previous chapter">CastManager</a></li>
+      <li>Next: <a href="../../../scripts/scripts.html" title="next chapter">&lt;no title&gt;</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/APIs/utilities/modules/chromecast.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
