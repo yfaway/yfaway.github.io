@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>CameraUtilities &#8212; Zone Manager API 0.1 documentation</title>
+    <title>ZoneParser &#8212; Zone Manager API 0.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -16,8 +16,8 @@
     <script type="text/javascript" src="../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="CastManager" href="cast_manager.html" />
-    <link rel="prev" title="Alert" href="alert.html" />
+    <link rel="next" title="&lt;no title&gt;" href="../../../scripts/scripts.html" />
+    <link rel="prev" title="TimeUtilities" href="time_utilities.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
   
@@ -34,30 +34,36 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-aaa_modules.camera_utilities">
-<span id="camerautilities"></span><h1>CameraUtilities<a class="headerlink" href="#module-aaa_modules.camera_utilities" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="aaa_modules.camera_utilities.retrieveSnapshots">
-<code class="descclassname">aaa_modules.camera_utilities.</code><code class="descname">retrieveSnapshots</code><span class="sig-paren">(</span><em>itemPrefix</em>, <em>snapshotCount</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/camera_utilities.html#retrieveSnapshots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.camera_utilities.retrieveSnapshots" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve the supplied number of snapshots.</p>
-<table class="docutils field-list" frame="void" rules="none">
+  <div class="section" id="module-aaa_modules.zone_parser">
+<span id="zoneparser"></span><h1>ZoneParser<a class="headerlink" href="#module-aaa_modules.zone_parser" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="aaa_modules.zone_parser.ZoneParser">
+<em class="property">class </em><code class="descclassname">aaa_modules.zone_parser.</code><code class="descname">ZoneParser</code><a class="reference internal" href="../../../_modules/aaa_modules/zone_parser.html#ZoneParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.zone_parser.ZoneParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct the zones from the existing items in OpenHab, using this naming
+convention: Floor_Location_ItemType
+For example, item “Switch FF_Foyer_LightSwitch …” will create a zone named
+‘Foyer’ at the first floor; and the zone contains a Light object.</p>
+<p>See <a class="reference internal" href="../../layout/modules/zone_manager.html#aaa_modules.layout_model.zone_manager.ZoneManager" title="aaa_modules.layout_model.zone_manager.ZoneManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZoneManager</span></code></a> and <a class="reference internal" href="../../layout/modules/zone.html#aaa_modules.layout_model.zone.Zone" title="aaa_modules.layout_model.zone.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>.</p>
+<dl class="staticmethod">
+<dt id="aaa_modules.zone_parser.ZoneParser.parse">
+<em class="property">static </em><code class="descname">parse</code><span class="sig-paren">(</span><em>items</em>, <em>itemRegistry</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/zone_parser.html#ZoneParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.zone_parser.ZoneParser.parse" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>itemPrefix</strong> (<em>str</em>) – the camera item prefix; the items Image and    UpdateImage are created from the prefix.</li>
-<li><strong>snapshotCount</strong> (<em>int</em>) – the # of snapshot images to retrieve</li>
+<li><strong>items</strong> (<em>scope.items</em>) – </li>
+<li><strong>itemRegistry</strong> (<em>scope.itemRegistry</em>) – </li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of snapshot URLs</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list(str)</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list(<a class="reference internal" href="../../layout/modules/zone.html#aaa_modules.layout_model.zone.Zone" title="aaa_modules.layout_model.zone.Zone">Zone</a>)</p>
 </td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -85,13 +91,13 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../../utilities.html">Utilities API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="alert_manager.html">AlertManager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="alert.html">Alert</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">CameraUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camera_utilities.html">CameraUtilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cast_manager.html">CastManager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="chromecast.html">Chromecast</a></li>
 <li class="toctree-l2"><a class="reference internal" href="environment_canada.html">EnvironmentCanada</a></li>
-<li class="toctree-l2"><a class="reference internal" href="time_utilities.html">TimeUtilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="security_manager.html">SecurityManager</a></li>
-<li class="toctree-l2"><a class="reference internal" href="zone_parser.html">ZoneParser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="time_utilities.html">TimeUtilities</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ZoneParser</a></li>
 </ul>
 </li>
 </ul>
@@ -102,8 +108,8 @@
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../utilities.html">Utilities API</a><ul>
   <li><a href="../utilities-modules.html">&lt;no title&gt;</a><ul>
-      <li>Previous: <a href="alert.html" title="previous chapter">Alert</a></li>
-      <li>Next: <a href="cast_manager.html" title="next chapter">CastManager</a></li>
+      <li>Previous: <a href="time_utilities.html" title="previous chapter">TimeUtilities</a></li>
+      <li>Next: <a href="../../../scripts/scripts.html" title="next chapter">&lt;no title&gt;</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -141,7 +147,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../../../_sources/APIs/utilities/modules/camera_utilities.rst.txt"
+      <a href="../../../_sources/APIs/utilities/modules/zone_parser.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

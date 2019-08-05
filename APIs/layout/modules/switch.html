@@ -40,6 +40,28 @@
 <dt id="aaa_modules.layout_model.switch.Fan">
 <em class="property">class </em><code class="descclassname">aaa_modules.layout_model.switch.</code><code class="descname">Fan</code><span class="sig-paren">(</span><em>switchItem</em>, <em>timerItem</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/switch.html#Fan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.switch.Fan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a fan switch.</p>
+<dl class="method">
+<dt id="aaa_modules.layout_model.switch.Fan.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>switchItem</em>, <em>timerItem</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/switch.html#Fan.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.switch.Fan.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ctor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>switchItem</strong> (<em>org.eclipse.smarthome.core.library.items.SwitchItem</em>) – </li>
+<li><strong>timerItem</strong> (<em>org.eclipse.smarthome.core.library.items.SwitchItem</em>) – </li>
+<li><strong>disableTrigeringFromMotionSensor</strong> (<em>bool</em>) – a flag to indicate whether             the switch should be turned on when motion sensor is triggered.            There is no logic associate with this value in this class; it is             used by external classes through the getter.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>ValueError</strong> – if any parameter is invalid</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -47,9 +69,30 @@
 <em class="property">class </em><code class="descclassname">aaa_modules.layout_model.switch.</code><code class="descname">Light</code><span class="sig-paren">(</span><em>switchItem</em>, <em>timerItem</em>, <em>illuminanceLevel=None</em>, <em>disableTrigeringFromMotionSensor=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/switch.html#Light"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.switch.Light" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a regular light.</p>
 <dl class="method">
+<dt id="aaa_modules.layout_model.switch.Light.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>switchItem</em>, <em>timerItem</em>, <em>illuminanceLevel=None</em>, <em>disableTrigeringFromMotionSensor=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/switch.html#Light.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.switch.Light.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>illuminanceLevel</strong> (<em>int</em>) – the illuminance level in LUX unit. The             light should only be turned on if the light level is below this unit.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="aaa_modules.layout_model.switch.Light.getIlluminanceThreshold">
 <code class="descname">getIlluminanceThreshold</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/switch.html#Light.getIlluminanceThreshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.switch.Light.getIlluminanceThreshold" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the illuminance level in LUX unit. Returns None if not applicable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int or None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -70,6 +113,28 @@ currentIlluminance is less than threshold.
 item. When the switch is turned on, the timer is turned on as well. As the
 timer expires, the switch is turned off (if it is not off already). If the
 switch is turned off not by the timer, the timer is cancelled.</p>
+<dl class="method">
+<dt id="aaa_modules.layout_model.switch.Switch.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>switchItem</em>, <em>timerItem</em>, <em>disableTrigeringFromMotionSensor=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/switch.html#Switch.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.switch.Switch.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ctor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>switchItem</strong> (<em>org.eclipse.smarthome.core.library.items.SwitchItem</em>) – </li>
+<li><strong>timerItem</strong> (<em>org.eclipse.smarthome.core.library.items.SwitchItem</em>) – </li>
+<li><strong>disableTrigeringFromMotionSensor</strong> (<em>bool</em>) – a flag to indicate whether             the switch should be turned on when motion sensor is triggered.            There is no logic associate with this value in this class; it is             used by external classes through the getter.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>ValueError</strong> – if any parameter is invalid</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="aaa_modules.layout_model.switch.Switch.canBeTriggeredByMotionSensor">
 <code class="descname">canBeTriggeredByMotionSensor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/switch.html#Switch.canBeTriggeredByMotionSensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.switch.Switch.canBeTriggeredByMotionSensor" title="Permalink to this definition">¶</a></dt>
@@ -97,6 +162,19 @@ triggered.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">-1 if the timestamp is not available, or an integer presenting        the epoch seconds</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.switch.Switch.getTimerItem">
+<code class="descname">getTimerItem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/switch.html#Switch.getTimerItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.switch.Switch.getTimerItem" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str the underlying item name</td>
 </tr>
 </tbody>
 </table>

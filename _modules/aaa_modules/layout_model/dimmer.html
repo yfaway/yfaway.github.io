@@ -44,7 +44,7 @@
 <span class="sd">    Represents a light dimmer with the dimm level value ranges from 1 to 100.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switchItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">,</span> <span class="n">dimLevel</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">timeRanges</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="Dimmer.__init__"><a class="viewcode-back" href="../../../APIs/layout/modules/dimmer.html#aaa_modules.layout_model.dimmer.Dimmer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switchItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">,</span> <span class="n">dimLevel</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">timeRanges</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">illuminanceLevel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">disableTrigeringFromMotionSensor</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -61,7 +61,7 @@
         <span class="n">time_utilities</span><span class="o">.</span><span class="n">stringToTimeRangeLists</span><span class="p">(</span><span class="n">timeRanges</span><span class="p">)</span> <span class="c1"># validate</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">dimLevel</span> <span class="o">=</span> <span class="n">dimLevel</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timeRanges</span> <span class="o">=</span> <span class="n">timeRanges</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeRanges</span> <span class="o">=</span> <span class="n">timeRanges</span></div>
 
 <div class="viewcode-block" id="Dimmer.turnOn"><a class="viewcode-back" href="../../../APIs/layout/modules/dimmer.html#aaa_modules.layout_model.dimmer.Dimmer.turnOn">[docs]</a>    <span class="k">def</span> <span class="nf">turnOn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>

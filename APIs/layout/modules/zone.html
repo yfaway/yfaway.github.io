@@ -36,7 +36,46 @@
             
   <div class="section" id="module-aaa_modules.layout_model.zone">
 <span id="zone"></span><h1>Zone<a class="headerlink" href="#module-aaa_modules.layout_model.zone" title="Permalink to this headline">¶</a></h1>
-<p>Represent a zone such as a room, foyer, porch, or lobby. 
+<dl class="class">
+<dt id="aaa_modules.layout_model.zone.Level">
+<em class="property">class </em><code class="descclassname">aaa_modules.layout_model.zone.</code><code class="descname">Level</code><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Level"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Level" title="Permalink to this definition">¶</a></dt>
+<dd><p>The vertical levels.</p>
+<dl class="attribute">
+<dt id="aaa_modules.layout_model.zone.Level.BASEMENT">
+<code class="descname">BASEMENT</code><em class="property"> = 0</em><a class="headerlink" href="#aaa_modules.layout_model.zone.Level.BASEMENT" title="Permalink to this definition">¶</a></dt>
+<dd><p>The basement</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="aaa_modules.layout_model.zone.Level.FIRST_FLOOR">
+<code class="descname">FIRST_FLOOR</code><em class="property"> = 1</em><a class="headerlink" href="#aaa_modules.layout_model.zone.Level.FIRST_FLOOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>The first floor</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="aaa_modules.layout_model.zone.Level.SECOND_FLOOR">
+<code class="descname">SECOND_FLOOR</code><em class="property"> = 2</em><a class="headerlink" href="#aaa_modules.layout_model.zone.Level.SECOND_FLOOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>The second floor</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="aaa_modules.layout_model.zone.Level.THIRD_FLOOR">
+<code class="descname">THIRD_FLOOR</code><em class="property"> = 3</em><a class="headerlink" href="#aaa_modules.layout_model.zone.Level.THIRD_FLOOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>The third floor</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="aaa_modules.layout_model.zone.Level.UNDEFINED">
+<code class="descname">UNDEFINED</code><em class="property"> = -1</em><a class="headerlink" href="#aaa_modules.layout_model.zone.Level.UNDEFINED" title="Permalink to this definition">¶</a></dt>
+<dd><p>Undefined</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="aaa_modules.layout_model.zone.Zone">
+<em class="property">class </em><code class="descclassname">aaa_modules.layout_model.zone.</code><code class="descname">Zone</code><span class="sig-paren">(</span><em>name</em>, <em>devices=[]</em>, <em>level=-1</em>, <em>neighbors=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represent a zone such as a room, foyer, porch, or lobby. 
 Each zone holds a number of devices/sensors such as switches, motion sensors,
 or temperature sensors.</p>
 <p>A zone might have zero, one or multiple adjacent zones. The adjacent zones
@@ -46,20 +85,20 @@ zone), and open space master. This layout-like structure is useful for
 certain scenario such as light control.</p>
 <p>Each zone instance is IMMUTABLE. The various add/remove methods return a new
 Zone object. Note however that the OpenHab item underlying each
-device/sensor is not (the state changes).
-See #addDevice(), #removeDevice(), #addNeighbor()</p>
+device/sensor is not (the state changes).  See <a class="reference internal" href="#aaa_modules.layout_model.zone.Zone.addDevice" title="aaa_modules.layout_model.zone.Zone.addDevice"><code class="xref py py-meth docutils literal notranslate"><span class="pre">addDevice()</span></code></a>, 
+<a class="reference internal" href="#aaa_modules.layout_model.zone.Zone.removeDevice" title="aaa_modules.layout_model.zone.Zone.removeDevice"><code class="xref py py-meth docutils literal notranslate"><span class="pre">removeDevice()</span></code></a>, <a class="reference internal" href="#aaa_modules.layout_model.zone.Zone.addNeighbor" title="aaa_modules.layout_model.zone.Zone.addNeighbor"><code class="xref py py-meth docutils literal notranslate"><span class="pre">addNeighbor()</span></code></a></p>
 <p>The zone itself doesn’t know how to operate a device/sensor. The sensors
 themselves (all sensors derive from Device class) exposes the possible
 operations. Generally, the zone needs not know about the exact types of 
 sensors it contains. However, controlling the light is a very common case
 for home automation; thus it does references to several virtual/physical
-sensors to determine the astro time, the illuminance, and the motion sensor.
-See #getDevices(), #getDevicesByType().</p>
+sensors to determine the astro time, the illuminance, and the motion sensor.  
+See <a class="reference internal" href="#aaa_modules.layout_model.zone.Zone.getDevices" title="aaa_modules.layout_model.zone.Zone.getDevices"><code class="xref py py-meth docutils literal notranslate"><span class="pre">getDevices()</span></code></a>, <a class="reference internal" href="#aaa_modules.layout_model.zone.Zone.getDevicesByType" title="aaa_modules.layout_model.zone.Zone.getDevicesByType"><code class="xref py py-meth docutils literal notranslate"><span class="pre">getDevicesByType()</span></code></a>.</p>
 <dl class="docutils">
 <dt>There are two sets of operation on each zone:</dt>
 <dd><ol class="first last arabic simple">
-<li>Active operations such as turn on a light/fan in a zone. These are     represented by common functions such as #turnOnLights(),     #turnOffLights(); and</li>
-<li>Passive operations triggered by events such onTimerExpired(),     onSwitchTurnedOn(), and so on.</li>
+<li>Active operations such as turn on a light/fan in a zone. These are         represented by common functions such as #turnOnLights(),         #turnOffLights(); and</li>
+<li>Passive operations triggered by events such onTimerExpired(),         onSwitchTurnedOn(), and so on.</li>
 </ol>
 </dd>
 </dl>
@@ -73,9 +112,9 @@ for each of these events. For example, a motion event will turn on the light
 if it is dark or if it is evening time; a timer expiry event will turn off
 the associated light if it is currently on.</p>
 <p>&#64;Immutable (the Zone object only)</p>
-<dl class="class">
-<dt id="aaa_modules.layout_model.zone.Zone">
-<em class="property">class </em><code class="descclassname">aaa_modules.layout_model.zone.</code><code class="descname">Zone</code><span class="sig-paren">(</span><em>name</em>, <em>devices=[]</em>, <em>level=-1</em>, <em>neighbors=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone" title="Permalink to this definition">¶</a></dt>
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>devices=[]</em>, <em>level=-1</em>, <em>neighbors=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new zone.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -84,13 +123,15 @@ the associated light if it is currently on.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<em>str</em>) – the zone name</li>
 <li><strong>devices</strong> (<em>list</em><em>(</em><a class="reference internal" href="device.html#aaa_modules.layout_model.device.Device" title="aaa_modules.layout_model.device.Device"><em>Device</em></a><em>)</em>) – the list of Device objects</li>
-<li><strong>level</strong> (<a class="reference internal" href="../../utilities/modules/alert.html#aaa_modules.alert.Level" title="aaa_modules.alert.Level"><em>Level</em></a>) – the zone’s physical level</li>
+<li><strong>level</strong> (<a class="reference internal" href="#aaa_modules.layout_model.zone.Level" title="aaa_modules.layout_model.zone.Level"><em>zone.Level</em></a>) – the zone’s physical level</li>
 <li><strong>neighbors</strong> (<em>list</em><em>(</em><em>Neigbor</em><em>)</em>) – the list of optional neighbor zones.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <dl class="method">
 <dt id="aaa_modules.layout_model.zone.Zone.addDevice">
 <code class="descname">addDevice</code><span class="sig-paren">(</span><em>device</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.addDevice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.addDevice" title="Permalink to this definition">¶</a></dt>
@@ -136,9 +177,7 @@ otherwise.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>itemName</strong> (<em>str</em>) – </li>
-<li><strong>sensorType</strong> (<a class="reference internal" href="device.html#aaa_modules.layout_model.device.Device" title="aaa_modules.layout_model.device.Device"><em>Device</em></a>) – an optional sub-class of Device. If specified,
-will search for itemName for those device types only. Otherwise,
-search for all devices/sensors.</li>
+<li><strong>sensorType</strong> (<a class="reference internal" href="device.html#aaa_modules.layout_model.device.Device" title="aaa_modules.layout_model.device.Device"><em>Device</em></a>) – an optional sub-class of Device. If specified,            will search for itemName for those device types only. Otherwise,            search for all devices/sensors.</li>
 </ul>
 </td>
 </tr>
@@ -178,6 +217,19 @@ search for all devices/sensors.</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.getId">
+<code class="descname">getId</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.getId"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.getId" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="aaa_modules.layout_model.zone.Zone.getIlluminanceLevel">
 <code class="descname">getIlluminanceLevel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.getIlluminanceLevel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.getIlluminanceLevel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves the maximum illuminance level from one or more IlluminanceSensor.
@@ -187,6 +239,32 @@ If no sensor is available, return -1.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.getLevel">
+<code class="descname">getLevel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.getLevel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.getLevel" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#aaa_modules.layout_model.zone.Level" title="aaa_modules.layout_model.zone.Level">zone.Level</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.layout_model.zone.Zone.getName">
+<code class="descname">getName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.getName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.getName" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -255,14 +333,12 @@ motion event was triggered within the provided # of minutes.</p>
 <dt id="aaa_modules.layout_model.zone.Zone.onMotionSensorTurnedOn">
 <code class="descname">onMotionSensorTurnedOn</code><span class="sig-paren">(</span><em>events</em>, <em>itemName</em>, <em>getZoneByIdFn</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.onMotionSensorTurnedOn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.onMotionSensorTurnedOn" title="Permalink to this definition">¶</a></dt>
 <dd><p>If the motion sensor belongs to this zone, turns on the associated
-switch, and returns True. Otherwise return False.
-&#64;see Switch::onSwitchTurnedOff</p>
+switch, and returns True. Otherwise return False.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>getZoneByIdFn</strong> (<em>lambda</em>) – a function that returns a Zone object given
-a zone id string</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>getZoneByIdFn</strong> (<em>lambda</em>) – a function that returns a Zone object            given a zone id string</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
 </tr>
@@ -274,8 +350,8 @@ a zone id string</td>
 <dt id="aaa_modules.layout_model.zone.Zone.onSwitchTurnedOff">
 <code class="descname">onSwitchTurnedOff</code><span class="sig-paren">(</span><em>events</em>, <em>itemName</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.onSwitchTurnedOff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.onSwitchTurnedOff" title="Permalink to this definition">¶</a></dt>
 <dd><p>If itemName belongs to this zone, dispatches the event to the associated
-Switch object, and returns True. Otherwise return False.
-&#64;see Switch::onSwitchTurnedOff</p>
+Switch object, and returns True. Otherwise return False.</p>
+<p>See <a class="reference internal" href="switch.html#aaa_modules.layout_model.switch.Switch.onSwitchTurnedOff" title="aaa_modules.layout_model.switch.Switch.onSwitchTurnedOff"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Switch.onSwitchTurnedOff()</span></code></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -290,14 +366,13 @@ Switch object, and returns True. Otherwise return False.
 <dt id="aaa_modules.layout_model.zone.Zone.onSwitchTurnedOn">
 <code class="descname">onSwitchTurnedOn</code><span class="sig-paren">(</span><em>events</em>, <em>itemName</em>, <em>getZoneByIdFn</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.onSwitchTurnedOn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.onSwitchTurnedOn" title="Permalink to this definition">¶</a></dt>
 <dd><p>If itemName belongs to this zone, dispatches the event to the associated
-Switch object, and returns True. Otherwise return False.
-&#64;see Switch::onSwitchTurnedOn</p>
+Switch object, and returns True. Otherwise return False.</p>
+<p>See <a class="reference internal" href="switch.html#aaa_modules.layout_model.switch.Switch.onSwitchTurnedOn" title="aaa_modules.layout_model.switch.Switch.onSwitchTurnedOn"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Switch.onSwitchTurnedOn()</span></code></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>getZoneByIdFn</strong> (<em>lambda</em>) – a function that returns a Zone object given
-a zone id string</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>getZoneByIdFn</strong> (<em>lambda</em>) – a function that returns a Zone object             given a zone id string</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
 </tr>
@@ -335,8 +410,8 @@ device</p>
 <code class="descname">shareSensorWith</code><span class="sig-paren">(</span><em>zone</em>, <em>sensorType</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/layout_model/zone.html#Zone.shareSensorWith"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.layout_model.zone.Zone.shareSensorWith" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if this zone shares at least one sensor of the given
 sensorType with the provider zone.
-Two sensors are considered the same if they link to the same channel.
-&#64;see #Device#getChannel()</p>
+Two sensors are considered the same if they link to the same channel.</p>
+<p>See <a class="reference internal" href="device.html#aaa_modules.layout_model.device.Device.getChannel" title="aaa_modules.layout_model.device.Device.getChannel"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Device.getChannel()</span></code></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

@@ -1,0 +1,330 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>aaa_modules.zone_parser &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for aaa_modules.zone_parser</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">core</span> <span class="k">import</span> <span class="n">osgi</span>
+<span class="kn">from</span> <span class="nn">core.jsr223</span> <span class="k">import</span> <span class="n">scope</span>
+<span class="kn">from</span> <span class="nn">org.eclipse.smarthome.core.items</span> <span class="k">import</span> <span class="n">Metadata</span>
+<span class="kn">from</span> <span class="nn">org.eclipse.smarthome.core.items</span> <span class="k">import</span> <span class="n">MetadataKey</span>
+<span class="kn">from</span> <span class="nn">org.slf4j</span> <span class="k">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">LoggerFactory</span>
+
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.neighbor</span> <span class="k">import</span> <span class="n">Neighbor</span><span class="p">,</span> <span class="n">NeighborType</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.zone</span> <span class="k">import</span> <span class="n">Zone</span><span class="p">,</span> <span class="n">Level</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.astro_sensor</span> <span class="k">import</span> <span class="n">AstroSensor</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.dimmer</span> <span class="k">import</span> <span class="n">Dimmer</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.illuminance_sensor</span> <span class="k">import</span> <span class="n">IlluminanceSensor</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.motion_sensor</span> <span class="k">import</span> <span class="n">MotionSensor</span>
+<span class="kn">from</span> <span class="nn">aaa_modules.layout_model.switch</span> <span class="k">import</span> <span class="n">Fan</span><span class="p">,</span> <span class="n">Light</span>
+
+<span class="n">META_DIMMING_SETTING</span> <span class="o">=</span> <span class="s1">&#39;dimmable&#39;</span>
+
+<span class="c1"># A metadata item to indicate which light to turn off when the current light</span>
+<span class="c1"># is switched on.</span>
+<span class="n">META_TURN_OFF_OTHER_LIGHT</span> <span class="o">=</span> <span class="s1">&#39;turnOff&#39;</span>
+
+<span class="c1"># A meta data item to indicate that this light shouldn&#39;t be turned on when a</span>
+<span class="c1"># motion event is triggered, if the other light is already on.</span>
+<span class="n">META_DISABLE_MOTION_TRIGGERING_IF_OTHER_LIGHT_IS_ON</span> <span class="o">=</span> <span class="s1">&#39;disableMotionTriggeringIfOtherLightIsOn&#39;</span>
+
+<span class="c1"># Indicates that the switch must not be turned on when the associated </span>
+<span class="c1"># motion sensor is triggered.</span>
+<span class="n">TAG_DISABLE_TRIGGERING_FROM_MOTION_SENSOR</span> <span class="o">=</span> <span class="s2">&quot;disable-triggering-from-motion-sensor&quot;</span>
+
+<span class="c1"># The light level threshold; if it is below this value, turn on the light.</span>
+<span class="n">ILLUMINANCE_THRESHOLD_IN_LUX</span> <span class="o">=</span> <span class="mi">8</span>
+
+<span class="n">TIME_OF_DAY_ITEM_NAME</span> <span class="o">=</span> <span class="s1">&#39;VT_Time_Of_Day&#39;</span>
+
+<span class="n">ITEM_NAME_PATTERN</span> <span class="o">=</span> <span class="s1">&#39;([^_]+)_([^_]+)_(.+)&#39;</span> <span class="c1"># level_location_deviceName</span>
+
+<span class="n">MetadataRegistry</span> <span class="o">=</span> <span class="n">osgi</span><span class="o">.</span><span class="n">get_service</span><span class="p">(</span><span class="s2">&quot;org.eclipse.smarthome.core.items.MetadataRegistry&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;org.eclipse.smarthome.model.script.Rules&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ZoneParser"><a class="viewcode-back" href="../../APIs/utilities/modules/zone_parser.html#aaa_modules.zone_parser.ZoneParser">[docs]</a><span class="k">class</span> <span class="nc">ZoneParser</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Construct the zones from the existing items in OpenHab, using this naming</span>
+<span class="sd">    convention: Floor_Location_ItemType</span>
+<span class="sd">    For example, item &quot;Switch FF_Foyer_LightSwitch ...&quot; will create a zone named</span>
+<span class="sd">    &#39;Foyer&#39; at the first floor; and the zone contains a Light object.</span>
+
+<span class="sd">    See :class:`.ZoneManager` and :class:`.Zone`.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ZoneParser.parse"><a class="viewcode-back" href="../../APIs/utilities/modules/zone_parser.html#aaa_modules.zone_parser.ZoneParser.parse">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">itemRegistry</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :param scope.items items:</span>
+<span class="sd">        :param scope.itemRegistry itemRegistry:</span>
+<span class="sd">        :rtype: list(Zone)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">zoneMap</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># map from string zoneId to Zone</span>
+
+        <span class="c1"># Each item is a list of 3 items: zone id, zone id, neighbor type.</span>
+        <span class="n">neighbors</span> <span class="o">=</span> <span class="p">[]</span> 
+
+        <span class="k">for</span> <span class="n">itemName</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">ITEM_NAME_PATTERN</span><span class="p">,</span> <span class="n">itemName</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">levelString</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">location</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">deviceName</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            
+            <span class="n">zoneId</span> <span class="o">=</span> <span class="n">ZoneParser</span><span class="o">.</span><span class="n">_getZoneIdFromItemName</span><span class="p">(</span><span class="n">itemName</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">zoneId</span> <span class="ow">in</span> <span class="n">zoneMap</span><span class="p">:</span>
+                <span class="n">zone</span> <span class="o">=</span> <span class="n">zoneMap</span><span class="p">[</span><span class="n">zoneId</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">zone</span> <span class="o">=</span> <span class="n">Zone</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="p">[],</span> <span class="n">ZoneParser</span><span class="o">.</span><span class="n">_getZoneLevel</span><span class="p">(</span><span class="n">levelString</span><span class="p">))</span>
+
+            <span class="n">openHabItem</span> <span class="o">=</span> <span class="n">itemRegistry</span><span class="o">.</span><span class="n">getItem</span><span class="p">(</span><span class="n">itemName</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;LightSwitch&#39;</span> <span class="o">==</span> <span class="n">deviceName</span><span class="p">:</span>
+                <span class="c1"># open space relationship</span>
+                <span class="n">turnOffMeta</span> <span class="o">=</span> <span class="n">MetadataRegistry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">MetadataKey</span><span class="p">(</span><span class="n">META_TURN_OFF_OTHER_LIGHT</span><span class="p">,</span> <span class="n">itemName</span><span class="p">))</span> 
+                <span class="k">if</span> <span class="kc">None</span> <span class="o">!=</span> <span class="n">turnOffMeta</span><span class="p">:</span>
+                    <span class="n">neighborZoneId</span> <span class="o">=</span> <span class="n">ZoneParser</span><span class="o">.</span><span class="n">_getZoneIdFromItemName</span><span class="p">(</span>
+                            <span class="n">turnOffMeta</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+                    <span class="n">neighbor</span> <span class="o">=</span> <span class="p">[</span><span class="n">zoneId</span><span class="p">,</span> <span class="n">neighborZoneId</span><span class="p">,</span> <span class="n">NeighborType</span><span class="o">.</span><span class="n">OPEN_SPACE</span><span class="p">]</span>
+                    <span class="n">neighbors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+
+                <span class="c1"># master-slave open space relationship</span>
+                <span class="n">masterSlaveMeta</span> <span class="o">=</span> <span class="n">MetadataRegistry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">MetadataKey</span><span class="p">(</span><span class="n">META_DISABLE_MOTION_TRIGGERING_IF_OTHER_LIGHT_IS_ON</span><span class="p">,</span>
+                            <span class="n">itemName</span><span class="p">))</span> 
+                <span class="k">if</span> <span class="kc">None</span> <span class="o">!=</span> <span class="n">masterSlaveMeta</span><span class="p">:</span>
+                    <span class="n">masterZoneId</span> <span class="o">=</span> <span class="n">ZoneParser</span><span class="o">.</span><span class="n">_getZoneIdFromItemName</span><span class="p">(</span><span class="n">masterSlaveMeta</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+                    <span class="n">neighborForward</span> <span class="o">=</span> <span class="p">[</span><span class="n">masterZoneId</span><span class="p">,</span> <span class="n">zoneId</span><span class="p">,</span> <span class="n">NeighborType</span><span class="o">.</span><span class="n">OPEN_SPACE_SLAVE</span><span class="p">]</span>
+                    <span class="n">neighbors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighborForward</span><span class="p">)</span>
+
+                    <span class="n">neighborReverse</span> <span class="o">=</span> <span class="p">[</span><span class="n">zoneId</span><span class="p">,</span> <span class="n">masterZoneId</span><span class="p">,</span> <span class="n">NeighborType</span><span class="o">.</span><span class="n">OPEN_SPACE_MASTER</span><span class="p">]</span>
+                    <span class="n">neighbors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighborReverse</span><span class="p">)</span>
+
+                <span class="n">timerItem</span> <span class="o">=</span> <span class="n">itemRegistry</span><span class="o">.</span><span class="n">getItem</span><span class="p">(</span><span class="n">itemName</span> <span class="o">+</span> <span class="s1">&#39;_Timer&#39;</span><span class="p">)</span>
+
+                <span class="n">disableMotionSensorTriggering</span> <span class="o">=</span> <span class="n">openHabItem</span><span class="o">.</span><span class="n">hasTag</span><span class="p">(</span>
+                        <span class="n">TAG_DISABLE_TRIGGERING_FROM_MOTION_SENSOR</span><span class="p">)</span>
+
+                <span class="c1"># dimmer setting</span>
+                <span class="n">meta</span> <span class="o">=</span> <span class="n">MetadataRegistry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">MetadataKey</span><span class="p">(</span><span class="n">META_DIMMING_SETTING</span><span class="p">,</span> <span class="n">itemName</span><span class="p">))</span> 
+                <span class="k">if</span> <span class="kc">None</span> <span class="o">!=</span> <span class="n">meta</span><span class="p">:</span>
+                    <span class="n">config</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">configuration</span>
+                    <span class="n">level</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;level&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">intValue</span><span class="p">()</span>
+                    <span class="n">timeRanges</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;timeRanges&#39;</span><span class="p">]</span>
+
+                    <span class="n">switch</span> <span class="o">=</span> <span class="n">Dimmer</span><span class="p">(</span><span class="n">openHabItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">timeRanges</span><span class="p">,</span>
+                            <span class="n">ILLUMINANCE_THRESHOLD_IN_LUX</span><span class="p">,</span>
+                            <span class="n">disableMotionSensorTriggering</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">switch</span> <span class="o">=</span> <span class="n">Light</span><span class="p">(</span><span class="n">openHabItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">,</span>
+                            <span class="n">ILLUMINANCE_THRESHOLD_IN_LUX</span><span class="p">,</span>
+                            <span class="n">disableMotionSensorTriggering</span><span class="p">)</span>
+
+                <span class="n">zone</span> <span class="o">=</span> <span class="n">zone</span><span class="o">.</span><span class="n">addDevice</span><span class="p">(</span><span class="n">switch</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s1">&#39;FanSwitch&#39;</span> <span class="o">==</span> <span class="n">deviceName</span><span class="p">:</span>
+                <span class="n">fan</span> <span class="o">=</span> <span class="n">Fan</span><span class="p">(</span><span class="n">openHabItem</span><span class="p">,</span>
+                        <span class="n">itemRegistry</span><span class="o">.</span><span class="n">getItem</span><span class="p">(</span><span class="n">itemName</span> <span class="o">+</span> <span class="s1">&#39;_Timer&#39;</span><span class="p">))</span>
+                <span class="n">zone</span> <span class="o">=</span> <span class="n">zone</span><span class="o">.</span><span class="n">addDevice</span><span class="p">(</span><span class="n">fan</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s1">&#39;LightSwitch_Illuminance&#39;</span> <span class="o">==</span> <span class="n">deviceName</span><span class="p">:</span>
+                <span class="n">illuminanceSensor</span> <span class="o">=</span> <span class="n">IlluminanceSensor</span><span class="p">(</span><span class="n">openHabItem</span><span class="p">)</span>
+                <span class="n">zone</span> <span class="o">=</span> <span class="n">zone</span><span class="o">.</span><span class="n">addDevice</span><span class="p">(</span><span class="n">illuminanceSensor</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">deviceName</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;MotionSensor&#39;</span><span class="p">):</span>
+                <span class="n">motionSensor</span> <span class="o">=</span> <span class="n">MotionSensor</span><span class="p">(</span><span class="n">openHabItem</span><span class="p">)</span>
+                <span class="n">zone</span> <span class="o">=</span> <span class="n">zone</span><span class="o">.</span><span class="n">addDevice</span><span class="p">(</span><span class="n">motionSensor</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">zone</span><span class="o">.</span><span class="n">getDevices</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">zoneMap</span><span class="p">[</span><span class="n">zoneId</span><span class="p">]</span> <span class="o">=</span> <span class="n">zone</span>
+
+            <span class="c1"># end looping items</span>
+
+        <span class="n">astroSensor</span> <span class="o">=</span> <span class="n">AstroSensor</span><span class="p">(</span><span class="n">itemRegistry</span><span class="o">.</span><span class="n">getItem</span><span class="p">(</span><span class="n">TIME_OF_DAY_ITEM_NAME</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">zoneMap</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">Light</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> \
+                    <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">getDevicesByType</span><span class="p">(</span><span class="n">Dimmer</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">addDevice</span><span class="p">(</span><span class="n">astroSensor</span><span class="p">)</span>
+                <span class="n">zoneMap</span><span class="p">[</span><span class="n">z</span><span class="o">.</span><span class="n">getId</span><span class="p">()]</span> <span class="o">=</span> <span class="n">z</span>
+
+        <span class="k">for</span> <span class="n">neighborInfo</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
+            <span class="n">zone</span> <span class="o">=</span> <span class="n">zoneMap</span><span class="p">[</span><span class="n">neighborInfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">zone</span> <span class="o">=</span> <span class="n">zone</span><span class="o">.</span><span class="n">addNeighbor</span><span class="p">(</span><span class="n">Neighbor</span><span class="p">(</span><span class="n">neighborInfo</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">neighborInfo</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+            <span class="n">zoneMap</span><span class="p">[</span><span class="n">neighborInfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">zone</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">ZoneParser</span><span class="o">.</span><span class="n">_normalizeNeighbors</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">zoneMap</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_normalizeNeighbors</span><span class="p">(</span><span class="n">zone</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        If a zone has the same neighbor with more than one OPEN_SPACE type,</span>
+<span class="sd">        remove the generic one NeighborType.OPEN_SPACE</span>
+
+<span class="sd">        :rtype: Zone new object</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">zoneIdToType</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">zone</span><span class="o">.</span><span class="n">getNeighbors</span><span class="p">():</span>
+            <span class="n">zoneId</span> <span class="o">=</span> <span class="n">neighbor</span><span class="o">.</span><span class="n">getZoneId</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">zoneId</span> <span class="ow">in</span> <span class="n">zoneIdToType</span><span class="p">:</span>
+                <span class="n">types</span> <span class="o">=</span> <span class="n">zoneIdToType</span><span class="p">[</span><span class="n">zoneId</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">types</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">zoneIdToType</span><span class="p">[</span><span class="n">zoneId</span><span class="p">]</span> <span class="o">=</span> <span class="n">types</span>
+
+            <span class="n">types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="o">.</span><span class="n">getType</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">types</span> <span class="ow">in</span> <span class="n">zoneIdToType</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">NeighborType</span><span class="o">.</span><span class="n">OPEN_SPACE_MASTER</span> <span class="ow">in</span> <span class="n">types</span> \
+                <span class="ow">or</span> <span class="n">NeighborType</span><span class="o">.</span><span class="n">OPEN_SPACE_SLAVE</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">NeighborType</span><span class="o">.</span><span class="n">OPEN_SPACE</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+                    <span class="n">types</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">NeighborType</span><span class="o">.</span><span class="n">OPEN_SPACE</span><span class="p">)</span>
+
+        <span class="n">zone</span> <span class="o">=</span> <span class="n">Zone</span><span class="p">(</span><span class="n">zone</span><span class="o">.</span><span class="n">getName</span><span class="p">(),</span> <span class="n">zone</span><span class="o">.</span><span class="n">getDevices</span><span class="p">(),</span> <span class="n">zone</span><span class="o">.</span><span class="n">getLevel</span><span class="p">(),</span> <span class="p">[])</span>
+        <span class="k">for</span> <span class="n">zoneId</span> <span class="ow">in</span> <span class="n">zoneIdToType</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">zoneIdToType</span><span class="p">[</span><span class="n">zoneId</span><span class="p">]:</span>
+                <span class="n">zone</span> <span class="o">=</span> <span class="n">zone</span><span class="o">.</span><span class="n">addNeighbor</span><span class="p">(</span><span class="n">Neighbor</span><span class="p">(</span><span class="n">zoneId</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">zone</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_getZoneIdFromItemName</span><span class="p">(</span><span class="n">itemName</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">ITEM_NAME_PATTERN</span><span class="p">,</span> <span class="n">itemName</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid item name pattern: &#39;</span> <span class="o">+</span> <span class="n">itemName</span><span class="p">)</span>
+
+        <span class="n">levelString</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">ZoneParser</span><span class="o">.</span><span class="n">_getZoneLevel</span><span class="p">(</span><span class="n">levelString</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">location</span>
+                
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_getZoneLevel</span><span class="p">(</span><span class="n">levelString</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :rtype: Level </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;BM&#39;</span> <span class="o">==</span> <span class="n">levelString</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Level</span><span class="o">.</span><span class="n">BASEMENT</span>
+        <span class="k">elif</span> <span class="s1">&#39;FF&#39;</span> <span class="o">==</span> <span class="n">levelString</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Level</span><span class="o">.</span><span class="n">FIRST_FLOOR</span>
+        <span class="k">elif</span> <span class="s1">&#39;SF&#39;</span> <span class="o">==</span> <span class="n">levelString</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Level</span><span class="o">.</span><span class="n">SECOND_FLOOR</span>
+        <span class="k">elif</span> <span class="s1">&#39;TF&#39;</span> <span class="o">==</span> <span class="n">levelString</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Level</span><span class="o">.</span><span class="n">THIRD_FLOOR</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Level</span><span class="o">.</span><span class="n">BASEMENT</span></div>
+
+<span class="n">zones</span> <span class="o">=</span> <span class="n">ZoneParser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">scope</span><span class="o">.</span><span class="n">items</span><span class="p">,</span> <span class="n">scope</span><span class="o">.</span><span class="n">itemRegistry</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> zones&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">zones</span><span class="p">)))</span>
+<span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">zones</span><span class="p">:</span>
+    <span class="n">output</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../APIs/layout.html">Zone Layout API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../APIs/utilities.html">Utilities API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,264 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>EnvironmentCanada &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="TimeUtilities" href="time_utilities.html" />
+    <link rel="prev" title="Chromecast" href="chromecast.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-aaa_modules.environment_canada">
+<span id="environmentcanada"></span><h1>EnvironmentCanada<a class="headerlink" href="#module-aaa_modules.environment_canada" title="Permalink to this headline">¶</a></h1>
+<p>An utility class to retrieve the weather forecast from the Environment Canada
+service.
+<a class="reference external" href="https://www.weather.gc.ca/forecast/">https://www.weather.gc.ca/forecast/</a></p>
+<dl class="class">
+<dt id="aaa_modules.environment_canada.EnvCanada">
+<em class="property">class </em><code class="descclassname">aaa_modules.environment_canada.</code><code class="descname">EnvCanada</code><a class="reference internal" href="../../../_modules/aaa_modules/environment_canada.html#EnvCanada"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.environment_canada.EnvCanada" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility class to retreive the hourly forecast.</p>
+<dl class="attribute">
+<dt id="aaa_modules.environment_canada.EnvCanada.CITY_FORECAST_MAPPING">
+<code class="descname">CITY_FORECAST_MAPPING</code><em class="property"> = {'ottawa': 'on-118'}</em><a class="headerlink" href="#aaa_modules.environment_canada.EnvCanada.CITY_FORECAST_MAPPING" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mapping from lowercase city name to the env canada identifier.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="aaa_modules.environment_canada.EnvCanada.retrieveHourlyForecast">
+<em class="property">static </em><code class="descname">retrieveHourlyForecast</code><span class="sig-paren">(</span><em>cityOrUrl</em>, <em>hourCount=12</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/environment_canada.html#EnvCanada.retrieveHourlyForecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.environment_canada.EnvCanada.retrieveHourlyForecast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the hourly forecast for the given city.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cityOrUrl</strong> (<em>str</em>) – the city name or the Environment Canada website            ‘<a class="reference external" href="https://www.weather.gc.ca/forecast/hourly/on-118_metric_e.html">https://www.weather.gc.ca/forecast/hourly/on-118_metric_e.html</a>’</li>
+<li><strong>hourCount</strong> (<em>int</em>) – the # of forecast hour to get, starting from             the next hour relative to the current time.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">list(<a class="reference internal" href="#aaa_modules.environment_canada.Forecast" title="aaa_modules.environment_canada.Forecast">Forecast</a>)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raise:</th><td class="field-body"><p class="first last">ValueError if cityOrUrl points to an invalid city, or if             hourCount is more than 24 and less than 1.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="aaa_modules.environment_canada.Forecast">
+<em class="property">class </em><code class="descclassname">aaa_modules.environment_canada.</code><code class="descname">Forecast</code><span class="sig-paren">(</span><em>forecastTime</em>, <em>temperature</em>, <em>condition</em>, <em>precipationProbability</em>, <em>wind</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/environment_canada.html#Forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.environment_canada.Forecast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represent the weather forecast.</p>
+<dl class="method">
+<dt id="aaa_modules.environment_canada.Forecast.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>forecastTime</em>, <em>temperature</em>, <em>condition</em>, <em>precipationProbability</em>, <em>wind</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/environment_canada.html#Forecast.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.environment_canada.Forecast.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>x.__init__(…) initializes x; see help(type(x)) for signature</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.environment_canada.Forecast.getCondition">
+<code class="descname">getCondition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/environment_canada.html#Forecast.getCondition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.environment_canada.Forecast.getCondition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the weather condition.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.environment_canada.Forecast.getForecastTime">
+<code class="descname">getForecastTime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/environment_canada.html#Forecast.getForecastTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.environment_canada.Forecast.getForecastTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the hour in 24-hour format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.environment_canada.Forecast.getPrecipationProbability">
+<code class="descname">getPrecipationProbability</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/environment_canada.html#Forecast.getPrecipationProbability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.environment_canada.Forecast.getPrecipationProbability" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the precipation probability.
+Possible values: High (70%+), Medium (60% - 70%), Low (&lt; 40%), or Nil (0%).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.environment_canada.Forecast.getTemperature">
+<code class="descname">getTemperature</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/environment_canada.html#Forecast.getTemperature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.environment_canada.Forecast.getTemperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the temperature in Celcius.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.environment_canada.Forecast.getUserFriendlyForecastTime">
+<code class="descname">getUserFriendlyForecastTime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/environment_canada.html#Forecast.getUserFriendlyForecastTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.environment_canada.Forecast.getUserFriendlyForecastTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the forecast hour in user friendly format (1AM, 2PM,…)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="aaa_modules.environment_canada.Forecast.getWind">
+<code class="descname">getWind</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aaa_modules/environment_canada.html#Forecast.getWind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aaa_modules.environment_canada.Forecast.getWind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the wind info such as “15 NW”.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../layout.html">Zone Layout API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../utilities.html">Utilities API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alert_manager.html">AlertManager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="alert.html">Alert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="camera_utilities.html">CameraUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cast_manager.html">CastManager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chromecast.html">Chromecast</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">EnvironmentCanada</a></li>
+<li class="toctree-l2"><a class="reference internal" href="time_utilities.html">TimeUtilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security_manager.html">SecurityManager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zone_parser.html">ZoneParser</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../utilities.html">Utilities API</a><ul>
+  <li><a href="../utilities-modules.html">&lt;no title&gt;</a><ul>
+      <li>Previous: <a href="chromecast.html" title="previous chapter">Chromecast</a></li>
+      <li>Next: <a href="time_utilities.html" title="next chapter">TimeUtilities</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/APIs/utilities/modules/environment_canada.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

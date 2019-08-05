@@ -46,16 +46,17 @@
 <span class="sd">    switch is turned off not by the timer, the timer is cancelled.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switchItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">,</span>
+<div class="viewcode-block" id="Switch.__init__"><a class="viewcode-back" href="../../../APIs/layout/modules/switch.html#aaa_modules.layout_model.switch.Switch.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switchItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">,</span>
             <span class="n">disableTrigeringFromMotionSensor</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Ctor</span>
+
 <span class="sd">        :param org.eclipse.smarthome.core.library.items.SwitchItem switchItem:</span>
 <span class="sd">        :param org.eclipse.smarthome.core.library.items.SwitchItem timerItem:</span>
-<span class="sd">        :param bool disableTrigeringFromMotionSensor: a flag to indicate whether</span>
-<span class="sd">        the switch should be turned on when motion sensor is triggered.</span>
-<span class="sd">        There is no logic associate with this value in this class; it is </span>
-<span class="sd">        used by external classes through the getter.</span>
+<span class="sd">        :param bool disableTrigeringFromMotionSensor: a flag to indicate whether \</span>
+<span class="sd">            the switch should be turned on when motion sensor is triggered.\</span>
+<span class="sd">            There is no logic associate with this value in this class; it is \</span>
+<span class="sd">            used by external classes through the getter.</span>
 <span class="sd">        :raise ValueError: if any parameter is invalid</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">Device</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switchItem</span><span class="p">)</span>
@@ -65,7 +66,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">timerItem</span> <span class="o">=</span> <span class="n">timerItem</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">disableTrigeringFromMotionSensor</span> <span class="o">=</span> <span class="n">disableTrigeringFromMotionSensor</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lastOffTimestampInSeconds</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lastOffTimestampInSeconds</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span></div>
 
 <div class="viewcode-block" id="Switch.turnOn"><a class="viewcode-back" href="../../../APIs/layout/modules/switch.html#aaa_modules.layout_model.switch.Switch.turnOn">[docs]</a>    <span class="k">def</span> <span class="nf">turnOn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -138,8 +139,9 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastOffTimestampInSeconds</span></div>
 
-    <span class="k">def</span> <span class="nf">getTimerItem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">timerItem</span>
+<div class="viewcode-block" id="Switch.getTimerItem"><a class="viewcode-back" href="../../../APIs/layout/modules/switch.html#aaa_modules.layout_model.switch.Switch.getTimerItem">[docs]</a>    <span class="k">def</span> <span class="nf">getTimerItem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; :rtype: str the underlying item name &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">timerItem</span></div>
 
 <div class="viewcode-block" id="Switch.canBeTriggeredByMotionSensor"><a class="viewcode-back" href="../../../APIs/layout/modules/switch.html#aaa_modules.layout_model.switch.Switch.canBeTriggeredByMotionSensor">[docs]</a>    <span class="k">def</span> <span class="nf">canBeTriggeredByMotionSensor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -160,37 +162,33 @@
         <span class="n">events</span><span class="o">.</span><span class="n">sendCommand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timerItem</span><span class="o">.</span><span class="n">getName</span><span class="p">(),</span> <span class="s2">&quot;ON&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Switch.isLowIlluminance"><a class="viewcode-back" href="../../../APIs/layout/modules/switch.html#aaa_modules.layout_model.switch.Switch.isLowIlluminance">[docs]</a>    <span class="k">def</span> <span class="nf">isLowIlluminance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">currentIlluminance</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Always return False.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39; Always return False.  &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
     <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        @override</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39; @override &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="sa">u</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="nb">super</span><span class="p">(</span><span class="n">Switch</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__unicode__</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">timerItem</span><span class="o">.</span><span class="n">getName</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="Light"><a class="viewcode-back" href="../../../APIs/layout/modules/switch.html#aaa_modules.layout_model.switch.Light">[docs]</a><span class="k">class</span> <span class="nc">Light</span><span class="p">(</span><span class="n">Switch</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Represents a regular light.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; Represents a regular light.  &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switchItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">,</span> <span class="n">illuminanceLevel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="Light.__init__"><a class="viewcode-back" href="../../../APIs/layout/modules/switch.html#aaa_modules.layout_model.switch.Light.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switchItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">,</span> <span class="n">illuminanceLevel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">disableTrigeringFromMotionSensor</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        :param int illuminanceLevel: the illuminance level in LUX unit. The \</span>
-<span class="sd">        light should only be turned on if the light level is below this unit.</span>
+<span class="sd">            light should only be turned on if the light level is below this unit.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">Switch</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switchItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">,</span>
                 <span class="n">disableTrigeringFromMotionSensor</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_illuminanceLevel</span> <span class="o">=</span> <span class="n">illuminanceLevel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_illuminanceLevel</span> <span class="o">=</span> <span class="n">illuminanceLevel</span></div>
 
 <div class="viewcode-block" id="Light.getIlluminanceThreshold"><a class="viewcode-back" href="../../../APIs/layout/modules/switch.html#aaa_modules.layout_model.switch.Light.getIlluminanceThreshold">[docs]</a>    <span class="k">def</span> <span class="nf">getIlluminanceThreshold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Returns the illuminance level in LUX unit. Returns None if not applicable.</span>
+
+<span class="sd">        :rtype: int or None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_illuminanceLevel</span></div>
 
@@ -217,11 +215,9 @@
                 <span class="nb">super</span><span class="p">(</span><span class="n">Light</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__unicode__</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_illuminanceLevel</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Fan"><a class="viewcode-back" href="../../../APIs/layout/modules/switch.html#aaa_modules.layout_model.switch.Fan">[docs]</a><span class="k">class</span> <span class="nc">Fan</span><span class="p">(</span><span class="n">Switch</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Represents a fan switch.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switchItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">):</span>
-        <span class="n">Switch</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switchItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">)</span></div>
+    <span class="sd">&#39;&#39;&#39; Represents a fan switch.  &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="Fan.__init__"><a class="viewcode-back" href="../../../APIs/layout/modules/switch.html#aaa_modules.layout_model.switch.Fan.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switchItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">):</span>
+        <span class="n">Switch</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switchItem</span><span class="p">,</span> <span class="n">timerItem</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>

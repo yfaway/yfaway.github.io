@@ -1,0 +1,277 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>aaa_modules.environment_canada &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for aaa_modules.environment_canada</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">An utility class to retrieve the weather forecast from the Environment Canada</span>
+<span class="sd">service.</span>
+<span class="sd">https://www.weather.gc.ca/forecast/</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">urllib2</span>
+
+<div class="viewcode-block" id="Forecast"><a class="viewcode-back" href="../../APIs/utilities/modules/environment_canada.html#aaa_modules.environment_canada.Forecast">[docs]</a><span class="k">class</span> <span class="nc">Forecast</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Represent the weather forecast.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="Forecast.__init__"><a class="viewcode-back" href="../../APIs/utilities/modules/environment_canada.html#aaa_modules.environment_canada.Forecast.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forecastTime</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span>
+            <span class="n">precipationProbability</span><span class="p">,</span> <span class="n">wind</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_forecastTime</span> <span class="o">=</span> <span class="n">forecastTime</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_condition</span> <span class="o">=</span> <span class="n">condition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_precipationProbability</span> <span class="o">=</span> <span class="n">precipationProbability</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wind</span> <span class="o">=</span> <span class="n">wind</span></div>
+
+<div class="viewcode-block" id="Forecast.getForecastTime"><a class="viewcode-back" href="../../APIs/utilities/modules/environment_canada.html#aaa_modules.environment_canada.Forecast.getForecastTime">[docs]</a>    <span class="k">def</span> <span class="nf">getForecastTime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the hour in 24-hour format.</span>
+
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forecastTime</span></div>
+
+<div class="viewcode-block" id="Forecast.getUserFriendlyForecastTime"><a class="viewcode-back" href="../../APIs/utilities/modules/environment_canada.html#aaa_modules.environment_canada.Forecast.getUserFriendlyForecastTime">[docs]</a>    <span class="k">def</span> <span class="nf">getUserFriendlyForecastTime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the forecast hour in user friendly format (1AM, 2PM,...)</span>
+
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">hour</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forecastTime</span>
+
+        <span class="k">if</span> <span class="n">hour</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;Midnight&#39;</span>
+        <span class="k">elif</span> <span class="n">hour</span> <span class="o">&lt;</span> <span class="mi">12</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">hour</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; AM&#39;</span>
+        <span class="k">elif</span> <span class="n">hour</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;Noon&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">hour</span> <span class="o">-</span> <span class="mi">12</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; PM&#39;</span></div>
+
+<div class="viewcode-block" id="Forecast.getTemperature"><a class="viewcode-back" href="../../APIs/utilities/modules/environment_canada.html#aaa_modules.environment_canada.Forecast.getTemperature">[docs]</a>    <span class="k">def</span> <span class="nf">getTemperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the temperature in Celcius.</span>
+
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temperature</span></div>
+    
+<div class="viewcode-block" id="Forecast.getCondition"><a class="viewcode-back" href="../../APIs/utilities/modules/environment_canada.html#aaa_modules.environment_canada.Forecast.getCondition">[docs]</a>    <span class="k">def</span> <span class="nf">getCondition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the weather condition.</span>
+
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_condition</span></div>
+
+<div class="viewcode-block" id="Forecast.getPrecipationProbability"><a class="viewcode-back" href="../../APIs/utilities/modules/environment_canada.html#aaa_modules.environment_canada.Forecast.getPrecipationProbability">[docs]</a>    <span class="k">def</span> <span class="nf">getPrecipationProbability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the precipation probability.</span>
+<span class="sd">        Possible values: High (70%+), Medium (60% - 70%), Low (&lt; 40%), or Nil (0%).</span>
+
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_precipationProbability</span></div>
+
+<div class="viewcode-block" id="Forecast.getWind"><a class="viewcode-back" href="../../APIs/utilities/modules/environment_canada.html#aaa_modules.environment_canada.Forecast.getWind">[docs]</a>    <span class="k">def</span> <span class="nf">getWind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the wind info such as &quot;15 NW&quot;.</span>
+
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wind</span></div>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">unicode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :rtype: unicode</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nb">str</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;</span><span class="si">{:5}</span><span class="s2">: </span><span class="si">{:7}</span><span class="s2"> </span><span class="si">{:25}</span><span class="s2"> </span><span class="si">{:6}</span><span class="s2"> </span><span class="si">{:6}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getForecastTime</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">getTemperature</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getCondition</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">getPrecipationProbability</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getWind</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="EnvCanada"><a class="viewcode-back" href="../../APIs/utilities/modules/environment_canada.html#aaa_modules.environment_canada.EnvCanada">[docs]</a><span class="k">class</span> <span class="nc">EnvCanada</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Utility class to retreive the hourly forecast.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+    <span class="n">CITY_FORECAST_MAPPING</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;ottawa&#39;</span> <span class="p">:</span> <span class="s1">&#39;on-118&#39;</span> <span class="p">}</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Mapping from lowercase city name to the env canada identifier.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="EnvCanada.retrieveHourlyForecast"><a class="viewcode-back" href="../../APIs/utilities/modules/environment_canada.html#aaa_modules.environment_canada.EnvCanada.retrieveHourlyForecast">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">retrieveHourlyForecast</span><span class="p">(</span><span class="n">cityOrUrl</span><span class="p">,</span> <span class="n">hourCount</span> <span class="o">=</span> <span class="mi">12</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Retrieves the hourly forecast for the given city.</span>
+
+<span class="sd">        :param str cityOrUrl: the city name or the Environment Canada website\</span>
+<span class="sd">            &#39;https://www.weather.gc.ca/forecast/hourly/on-118_metric_e.html&#39;</span>
+<span class="sd">        :param int hourCount: the # of forecast hour to get, starting from \</span>
+<span class="sd">            the next hour relative to the current time.</span>
+<span class="sd">        :rtype: list(Forecast)</span>
+<span class="sd">        :raise: ValueError if cityOrUrl points to an invalid city, or if \</span>
+<span class="sd">            hourCount is more than 24 and less than 1.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">hourCount</span> <span class="o">&gt;</span> <span class="mi">24</span> <span class="ow">or</span> <span class="n">hourCount</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;hourCount must be between 1 and 24.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">cityOrUrl</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;https:&#39;</span><span class="p">:</span>
+            <span class="n">normalizedCity</span> <span class="o">=</span> <span class="n">cityOrUrl</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">normalizedCity</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">EnvCanada</span><span class="o">.</span><span class="n">CITY_FORECAST_MAPPING</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;Can&#39;t map city name to URL for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cityOrUrl</span><span class="p">))</span>
+
+            <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://www.weather.gc.ca/forecast/hourly/</span><span class="si">{}</span><span class="s1">_metric_e.html&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">EnvCanada</span><span class="o">.</span><span class="n">CITY_FORECAST_MAPPING</span><span class="p">[</span><span class="n">normalizedCity</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">cityOrUrl</span>
+            
+        <span class="n">data</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">unicode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+        <span class="n">timeStruct</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">()</span>
+        <span class="n">hourOfDay</span> <span class="o">=</span> <span class="n">timeStruct</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;header2.*?\&gt;(\d+)&lt;             # temp </span>
+<span class="s2">                      .*?&lt;p&gt;(.*?)&lt;/p&gt;                # condition</span>
+<span class="s2">                      .*?header4.*?&gt;(.+?)&lt;           # precip probability</span>
+<span class="s2">                      .*?abbr.*?&gt;(.+?)&lt;/abbr&gt; (.*?)&lt; # wind direction and speed</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="n">forecasts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">increment</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">hourCount</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">hour</span> <span class="o">=</span> <span class="p">(</span><span class="n">hourOfDay</span> <span class="o">+</span> <span class="n">increment</span><span class="p">)</span> <span class="o">%</span> <span class="mi">24</span>
+            <span class="n">hourString</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;0&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">hour</span><span class="p">))</span> <span class="k">if</span> <span class="n">hour</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">hour</span><span class="p">)</span>
+            <span class="n">hourString</span> <span class="o">+=</span> <span class="s2">&quot;:00&quot;</span>
+
+            <span class="n">searchString</span> <span class="o">=</span> <span class="s1">&#39;&lt;td headers=&quot;header1&quot; class=&quot;text-center&quot;&gt;</span><span class="si">{}</span><span class="s1">&lt;/td&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hourString</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">searchString</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+
+            <span class="n">subdata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">:]</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">subdata</span><span class="p">,</span> 
+                    <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid pattern.&quot;</span><span class="p">)</span>
+
+            <span class="n">temperature</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">condition</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">precipProb</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">wind</span> <span class="o">=</span> <span class="sa">u</span><span class="s1">&#39;&#39;</span> <span class="o">+</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+            <span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Forecast</span><span class="p">(</span><span class="n">hour</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">precipProb</span><span class="p">,</span> <span class="n">wind</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">forecasts</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../APIs/layout.html">Zone Layout API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../APIs/utilities.html">Utilities API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

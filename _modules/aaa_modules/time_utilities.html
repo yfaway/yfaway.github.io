@@ -1,0 +1,228 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>aaa_modules.time_utilities &#8212; Zone Manager API 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for aaa_modules.time_utilities</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Utility class containing a set of time related functions.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">org.slf4j</span> <span class="k">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">LoggerFactory</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;org.eclipse.smarthome.model.script.Rules&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="isDinnerTime"><a class="viewcode-back" href="../../APIs/utilities/modules/time_utilities.html#aaa_modules.time_utilities.isDinnerTime">[docs]</a><span class="k">def</span> <span class="nf">isDinnerTime</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">isInTimeRange</span><span class="p">(</span><span class="s2">&quot;17:50 - 20:00&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="isKidsSleepTime"><a class="viewcode-back" href="../../APIs/utilities/modules/time_utilities.html#aaa_modules.time_utilities.isKidsSleepTime">[docs]</a><span class="k">def</span> <span class="nf">isKidsSleepTime</span><span class="p">(</span><span class="n">epochSeconds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :param int epochSeconds: seconds since epoch, optional</span>
+<span class="sd">    :return: true if it is kids&#39; nap or sleep time.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">timeStruct</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="n">epochSeconds</span><span class="p">)</span>
+    <span class="n">hourOfDay</span> <span class="o">=</span> <span class="n">timeStruct</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">hourOfDay</span> <span class="o">&gt;=</span> <span class="mi">20</span> <span class="ow">or</span> <span class="n">hourOfDay</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">:</span> <span class="c1"># regular sleep time</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">hourOfDay</span> <span class="o">&gt;=</span> <span class="mi">13</span> <span class="ow">and</span> <span class="n">hourOfDay</span> <span class="o">&lt;=</span> <span class="mi">16</span><span class="p">:</span> <span class="c1"># nap time</span>
+        <span class="n">dayOfWeek</span> <span class="o">=</span> <span class="n">timeStruct</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">dayOfWeek</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">or</span> <span class="n">dayOfWeek</span> <span class="o">==</span> <span class="mi">6</span> <span class="c1"># weekend</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="isInTimeRange"><a class="viewcode-back" href="../../APIs/utilities/modules/time_utilities.html#aaa_modules.time_utilities.isInTimeRange">[docs]</a><span class="k">def</span> <span class="nf">isInTimeRange</span><span class="p">(</span><span class="n">timeRangesString</span><span class="p">,</span> <span class="n">epochSeconds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Determines if the current time is in the timeRange string.</span>
+
+<span class="sd">    :param str timeRangesString: one or multiple time range in 24-hour format.\</span>
+<span class="sd">        Example: &#39;10-12&#39;, or &#39;6-9, 7-7, 8:30 - 14:45&#39;, or &#39;19 - 8&#39; (wrap around)</span>
+<span class="sd">    :param int epochSeconds: seconds since epoch, optional</span>
+<span class="sd">    :rtype: boolean</span>
+<span class="sd">    :raise: ValueError if the time range string is invalid</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="kc">None</span> <span class="o">==</span> <span class="n">timeRangesString</span> <span class="ow">or</span> <span class="mi">0</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">timeRangesString</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must have at least one time range.&#39;</span><span class="p">)</span>
+
+    <span class="n">timeStruct</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="n">epochSeconds</span><span class="p">)</span>
+    <span class="n">hour</span> <span class="o">=</span> <span class="n">timeStruct</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">minute</span> <span class="o">=</span> <span class="n">timeStruct</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="nb">range</span> <span class="ow">in</span> <span class="n">stringToTimeRangeLists</span><span class="p">(</span><span class="n">timeRangesString</span><span class="p">):</span>
+        <span class="n">startHour</span><span class="p">,</span> <span class="n">startMinute</span><span class="p">,</span> <span class="n">endHour</span><span class="p">,</span> <span class="n">endMinute</span> <span class="o">=</span> <span class="nb">range</span>
+        <span class="k">if</span> <span class="n">startHour</span> <span class="o">&lt;=</span> <span class="n">endHour</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="n">hour</span> <span class="o">&lt;</span> <span class="n">startHour</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># wrap around scenario</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">hour</span> <span class="o">==</span> <span class="n">startHour</span> <span class="ow">and</span> <span class="n">minute</span> <span class="o">&lt;</span> <span class="n">startMinute</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">endMinute</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">startHour</span> <span class="o">&lt;=</span> <span class="n">endHour</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">hour</span> <span class="o">&gt;=</span> <span class="n">endHour</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1"># wrap around</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">hour</span> <span class="o">&lt;</span> <span class="n">startHour</span> <span class="ow">or</span> <span class="n">hour</span> <span class="o">&gt;</span> <span class="mi">23</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">hour</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">hour</span> <span class="o">&gt;</span> <span class="n">endHour</span><span class="p">):</span>
+                    <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># minutes are &gt; 0</span>
+            <span class="k">if</span> <span class="n">hour</span> <span class="o">&gt;</span> <span class="n">endHour</span> <span class="ow">or</span> <span class="n">minute</span> <span class="o">&gt;</span> <span class="n">endMinute</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="stringToTimeRangeLists"><a class="viewcode-back" href="../../APIs/utilities/modules/time_utilities.html#aaa_modules.time_utilities.stringToTimeRangeLists">[docs]</a><span class="k">def</span> <span class="nf">stringToTimeRangeLists</span><span class="p">(</span><span class="n">timeRangesString</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return a list of time ranges. Each list item is itself a list of 4 elements:</span>
+<span class="sd">    startTime, startMinute, endTime, endMinute.</span>
+
+<span class="sd">    :rtype: list</span>
+<span class="sd">    :raise: ValueError if the time range string is invalid</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="kc">None</span> <span class="o">==</span> <span class="n">timeRangesString</span> <span class="ow">or</span> <span class="mi">0</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">timeRangesString</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must have at least one time range.&#39;</span><span class="p">)</span>
+
+    <span class="n">timeRanges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="n">timeRangesString</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">pair</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="mi">1</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">):</span>
+            <span class="n">hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">hour</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">hour</span> <span class="o">&gt;</span> <span class="mi">23</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Hour must be between 0 and 23 inclusive.&#39;</span><span class="p">)</span>
+            <span class="n">timeRanges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">hour</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">hour</span><span class="p">),</span> <span class="mi">59</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="mi">2</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">):</span>
+            <span class="n">thisRange</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">def</span> <span class="nf">parseHourAndMinute</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
+                <span class="n">hourMinute</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+                <span class="n">hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hourMinute</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">hour</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">hour</span> <span class="o">&gt;</span> <span class="mi">23</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Hour must be between 0 and 23 inclusive.&#39;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="mi">1</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">hourMinute</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">hour</span><span class="p">),</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># 0 minute</span>
+                <span class="k">elif</span> <span class="mi">2</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">hourMinute</span><span class="p">):</span>
+                    <span class="n">minute</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hourMinute</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">minute</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">minute</span> <span class="o">&gt;</span> <span class="mi">59</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Minute must be between 0 and 59 inclusive.&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="p">[</span><span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must be in format &quot;HH&quot; or &quot;HH:MM&quot;.&#39;</span><span class="p">)</span>
+
+            <span class="n">thisRange</span> <span class="o">+=</span> <span class="n">parseHourAndMinute</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">thisRange</span> <span class="o">+=</span> <span class="n">parseHourAndMinute</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="n">timeRanges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thisRange</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must have either one or two time values.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">timeRanges</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Zone Manager API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">APIs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../APIs/layout.html">Zone Layout API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../APIs/utilities.html">Utilities API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, yfaway.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
